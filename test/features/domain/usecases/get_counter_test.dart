@@ -11,10 +11,15 @@ import 'get_counter_test.mocks.dart';
 @GenerateMocks([CounterRepository])
 void main() {
   final counter = Counter(count: 0);
+  late MockCounterRepository mockCounterRepository;
+  late GetCounter useCase;
+
+  setUp(() {
+    mockCounterRepository = MockCounterRepository();
+    useCase = GetCounter(mockCounterRepository);
+  });
 
   test("should get count from the repository", () async {
-    final mockCounterRepository = MockCounterRepository();
-    final useCase = GetCounter(mockCounterRepository);
     // arrange
     when(
       mockCounterRepository.getCounter(),

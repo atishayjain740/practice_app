@@ -79,7 +79,7 @@ void main() {
           // act
           await counterRepositoryImpl.getCounter();
           // assert
-          verify(mockCounterLocalDataSource.cacheCounter(counter));
+          verify(mockCounterLocalDataSource.cacheCounter(counterModel));
         },
       );
 

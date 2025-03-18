@@ -11,7 +11,7 @@ import 'package:practice_app/features/counter/data/datasources/counter_local_dat
     as _i3;
 import 'package:practice_app/features/counter/data/datasources/counter_remote_data_source.dart'
     as _i5;
-import 'package:practice_app/features/counter/domain/entities/counter.dart'
+import 'package:practice_app/features/counter/data/models/counter_model.dart'
     as _i2;
 
 // ignore_for_file: type=lint
@@ -28,8 +28,8 @@ import 'package:practice_app/features/counter/domain/entities/counter.dart'
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeCounter_0 extends _i1.SmartFake implements _i2.Counter {
-  _FakeCounter_0(Object parent, Invocation parentInvocation)
+class _FakeCounterModel_0 extends _i1.SmartFake implements _i2.CounterModel {
+  _FakeCounterModel_0(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
@@ -43,17 +43,17 @@ class MockCounterLocalDataSource extends _i1.Mock
   }
 
   @override
-  _i4.Future<_i2.Counter> getCounter() =>
+  _i4.Future<_i2.CounterModel> getCounter() =>
       (super.noSuchMethod(
             Invocation.method(#getCounter, []),
-            returnValue: _i4.Future<_i2.Counter>.value(
-              _FakeCounter_0(this, Invocation.method(#getCounter, [])),
+            returnValue: _i4.Future<_i2.CounterModel>.value(
+              _FakeCounterModel_0(this, Invocation.method(#getCounter, [])),
             ),
           )
-          as _i4.Future<_i2.Counter>);
+          as _i4.Future<_i2.CounterModel>);
 
   @override
-  _i4.Future<void> cacheCounter(_i2.Counter? counterToCache) =>
+  _i4.Future<void> cacheCounter(_i2.CounterModel? counterToCache) =>
       (super.noSuchMethod(
             Invocation.method(#cacheCounter, [counterToCache]),
             returnValue: _i4.Future<void>.value(),
@@ -72,14 +72,14 @@ class MockCounterRemoteDataSource extends _i1.Mock
   }
 
   @override
-  _i4.Future<_i2.Counter> getCounter() =>
+  _i4.Future<_i2.CounterModel> getCounter() =>
       (super.noSuchMethod(
             Invocation.method(#getCounter, []),
-            returnValue: _i4.Future<_i2.Counter>.value(
-              _FakeCounter_0(this, Invocation.method(#getCounter, [])),
+            returnValue: _i4.Future<_i2.CounterModel>.value(
+              _FakeCounterModel_0(this, Invocation.method(#getCounter, [])),
             ),
           )
-          as _i4.Future<_i2.Counter>);
+          as _i4.Future<_i2.CounterModel>);
 }
 
 /// A class which mocks [NetworkInfo].

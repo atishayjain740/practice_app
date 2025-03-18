@@ -1,5 +1,5 @@
-import 'package:practice_app/features/counter/domain/entities/counter.dart';
+import 'package:practice_app/features/counter/data/models/counter_model.dart';
 
 abstract class CounterRemoteDataSource {
-  Future<Counter> getCounter();
+  Future<CounterModel> getCounter();
 }

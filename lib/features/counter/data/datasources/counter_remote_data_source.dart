@@ -22,7 +22,15 @@ class CounterRemoteDataSourceImpl implements CounterRemoteDataSource {
       headers: {'Content-Type': 'application/json'},
     );
     if (response.statusCode == 200) {
-      return CounterModel.fromJson(json.decode(response.body));
+      Map<String, dynamic> map = {};
+      dynamic data = json.decode(response.body);
+      if (data is List) {
+        map = {'count': data[0]};
+      } else {
+        map = data;
+      }
+
+      return CounterModel.fromJson(map);
     } else {
       throw ServerException();
     }

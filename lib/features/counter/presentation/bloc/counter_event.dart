@@ -13,3 +13,8 @@ class IncrementCountEvent extends CounterEvent {
   final String count;
   const IncrementCountEvent({required this.count});
 }
+
+class DecrementCountEvent extends CounterEvent {
+  final String count;
+  const DecrementCountEvent({required this.count});
+}

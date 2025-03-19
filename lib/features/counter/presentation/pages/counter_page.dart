@@ -8,16 +8,12 @@ class CounterPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create:
-          (_) => sl<CounterBloc>(), // Ensures CounterBloc is properly provided
-      child: CounterView(), // Move the UI to a separate widget
-    );
+    return BlocProvider(create: (_) => sl<CounterBloc>(), child: CounterView());
   }
 }
 
 class CounterView extends StatelessWidget {
-  late String _count;
+  String _count = "";
 
   @override
   Widget build(BuildContext context) {
@@ -60,6 +56,15 @@ class CounterView extends StatelessWidget {
                 );
               },
               child: Text("Increment count"),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                context.read<CounterBloc>().add(
+                  DecrementCountEvent(count: _count),
+                );
+              },
+              child: Text("Decrement count"),
             ),
           ],
         ),

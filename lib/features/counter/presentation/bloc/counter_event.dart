@@ -8,3 +8,8 @@ sealed class CounterEvent extends Equatable {
 }
 
 class GetCountEvent extends CounterEvent {}
+
+class IncrementCountEvent extends CounterEvent {
+  final String count;
+  const IncrementCountEvent({required this.count});
+}

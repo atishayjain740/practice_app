@@ -17,6 +17,8 @@ class CounterPage extends StatelessWidget {
 }
 
 class CounterView extends StatelessWidget {
+  late String _count;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,10 +39,8 @@ class CounterView extends StatelessWidget {
                 } else if (state is CounterLoading) {
                   return CircularProgressIndicator();
                 } else if (state is CounterLoaded) {
-                  return Text(
-                    state.counter.count.toString(),
-                    style: TextStyle(fontSize: 25),
-                  );
+                  _count = state.counter.count.toString();
+                  return Text(_count, style: TextStyle(fontSize: 25));
                 }
                 return Container();
               },
@@ -51,6 +51,15 @@ class CounterView extends StatelessWidget {
                 context.read<CounterBloc>().add(GetCountEvent());
               },
               child: Text("Get random counter"),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                context.read<CounterBloc>().add(
+                  IncrementCountEvent(count: _count),
+                );
+              },
+              child: Text("Increment count"),
             ),
           ],
         ),

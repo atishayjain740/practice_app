@@ -49,6 +49,33 @@ void main() {
       verify(mockNetworkInfo.isConnected);
     });
 
+    test("should save the counter and return it", () async {
+      // arrange
+      when(
+        mockCounterLocalDataSource.getCounter(),
+      ).thenAnswer((_) async => counterModel);
+      // act
+      final result = await counterRepositoryImpl.saveCounter(counterModel);
+      // assert
+      verifyZeroInteractions(mockCounterRemoteDataSource);
+      verify(mockCounterLocalDataSource.cacheCounter(counterModel));
+      expect(result, equals(Right(counter)));
+    });
+
+    test("should return failure when caching data is unsuccesfull", () async {
+      // arrange
+      when(
+        mockCounterLocalDataSource.cacheCounter(counterModel),
+      ).thenThrow(CacheException());
+
+      // act
+      final result = await counterRepositoryImpl.saveCounter(counterModel);
+      // assert
+      verify(mockCounterLocalDataSource.cacheCounter(counterModel));
+      verifyZeroInteractions(mockCounterRemoteDataSource);
+      expect(result, Left(CacheFailure()));
+    });
+
     group("device online", () {
       setUp(() {
         when(mockNetworkInfo.isConnected).thenAnswer((_) async => true);
@@ -122,7 +149,7 @@ void main() {
       );
 
       test(
-        "should return CacheFailure when the cached data is present",
+        "should return CacheFailure when the cached data is not present",
         () async {
           // arrange
           when(

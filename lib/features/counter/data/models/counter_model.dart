@@ -13,6 +13,16 @@ class CounterModel extends Counter {
     return data;
   }
 
+  /// Convert a domain Counter to CounterModel
+  factory CounterModel.fromEntity(Counter counter) {
+    return CounterModel(count: counter.count);
+  }
+
+  /// Convert a CounterModel to domain Counter
+  Counter toEntity() {
+    return Counter(count: count);
+  }
+
   static int convertToInt(dynamic value) {
     if (value is int) {
       return value;

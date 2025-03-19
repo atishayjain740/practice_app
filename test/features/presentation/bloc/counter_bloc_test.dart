@@ -7,18 +7,26 @@ import 'package:practice_app/core/error/failures.dart';
 import 'package:practice_app/core/usecase/usecase.dart';
 import 'package:practice_app/features/counter/domain/entities/counter.dart';
 import 'package:practice_app/features/counter/domain/usecases/get_counter.dart';
+import 'package:practice_app/features/counter/domain/usecases/increment_counter.dart';
 import 'package:practice_app/features/counter/presentation/bloc/counter_bloc.dart';
 
 import 'counter_bloc_test.mocks.dart';
 
-@GenerateMocks([GetCounter])
+@GenerateMocks([GetCounter, IncrementCounter])
 void main() {
   late CounterBloc counterBloc;
   late MockGetCounter mockGetCounter;
-  Counter counter = Counter(count: 0);
+  late MockIncrementCounter mockIncrementCounter;
+
+  const int count = 0;
+  Counter counter = Counter(count: count);
   setUp(() {
     mockGetCounter = MockGetCounter();
-    counterBloc = CounterBloc(getCounter: mockGetCounter);
+    mockIncrementCounter = MockIncrementCounter();
+    counterBloc = CounterBloc(
+      getCounter: mockGetCounter,
+      incrementCounter: mockIncrementCounter,
+    );
   });
 
   tearDown(() {
@@ -62,4 +70,41 @@ void main() {
       verify(mockGetCounter(NoParams())).called(1);
     },
   );
+
+  group('increment count', () {
+    const expectedCounter = Counter(count: count + 1);
+    blocTest<CounterBloc, CounterState>(
+      'Emits [CounterLoading, CounterLoaded] when IncrementCount succeeds',
+      build: () {
+        when(
+          mockIncrementCounter(any),
+        ).thenAnswer((_) async => Right(expectedCounter));
+        return counterBloc;
+      },
+      act: (bloc) => bloc.add(IncrementCountEvent(count: count.toString())),
+      expect: () => [CounterLoading(), CounterLoaded(counter: expectedCounter)],
+      verify: (_) {
+        verify(mockIncrementCounter(Params(counter: counter))).called(1);
+      },
+    );
+
+    blocTest<CounterBloc, CounterState>(
+      'Emits [CounterLoading, CounterError] when IncrementCount fails',
+      build: () {
+        when(
+          mockIncrementCounter(any),
+        ).thenAnswer((_) async => Left(CacheFailure()));
+        return counterBloc;
+      },
+      act: (bloc) => bloc.add(IncrementCountEvent(count: count.toString())),
+      expect:
+          () => [
+            CounterLoading(),
+            CounterError(message: "Failed to increment."),
+          ],
+      verify: (_) {
+        verify(mockIncrementCounter(Params(counter: counter))).called(1);
+      },
+    );
+  });
 }

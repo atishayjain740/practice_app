@@ -8,7 +8,10 @@ class CounterPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(create: (_) => sl<CounterBloc>(), child: CounterView());
+    return BlocProvider(
+      create: (_) => sl<CounterBloc>()..add(GetCachedCountEvent()),
+      child: CounterView(),
+    );
   }
 }
 

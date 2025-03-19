@@ -4,6 +4,7 @@ import 'package:practice_app/core/error/failures.dart';
 import 'package:practice_app/core/usecase/usecase.dart';
 import 'package:practice_app/features/counter/domain/entities/counter.dart';
 import 'package:practice_app/features/counter/domain/usecases/decrement_counter.dart';
+import 'package:practice_app/features/counter/domain/usecases/get_cached_counter.dart';
 import 'package:practice_app/features/counter/domain/usecases/get_counter.dart';
 import 'package:practice_app/features/counter/domain/usecases/increment_counter.dart'
     as ic;
@@ -15,11 +16,13 @@ class CounterBloc extends Bloc<CounterEvent, CounterState> {
   final GetCounter getCounter;
   final ic.IncrementCounter incrementCounter;
   final DecrementCounter decrementCounter;
+  final GetCachedCounter getCachedCounter;
 
   CounterBloc({
     required this.getCounter,
     required this.incrementCounter,
     required this.decrementCounter,
+    required this.getCachedCounter,
   }) : super(CounterEmpty()) {
     on<GetCountEvent>((event, emit) async {
       emit(CounterLoading());
@@ -33,6 +36,15 @@ class CounterBloc extends Bloc<CounterEvent, CounterState> {
                     : "Faild to load counter. Cache Exception",
           ),
         ),
+        (counter) => emit(CounterLoaded(counter: counter)),
+      );
+    });
+
+    on<GetCachedCountEvent>((event, emit) async {
+      emit(CounterLoading());
+      final result = await getCachedCounter(NoParams());
+      result.fold(
+        (failure) => emit(CounterEmpty()),
         (counter) => emit(CounterLoaded(counter: counter)),
       );
     });

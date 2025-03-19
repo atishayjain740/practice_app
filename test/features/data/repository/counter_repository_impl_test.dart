@@ -32,6 +32,43 @@ void main() {
     );
   });
 
+  group('get cached counter', () {
+    int count = 0;
+    CounterModel counterModel = CounterModel(count: count);
+    Counter counter = counterModel;
+    test(
+      "should return the last locally cached data when the cached data is present",
+      () async {
+        // arrange
+        when(
+          mockCounterLocalDataSource.getCounter(),
+        ).thenAnswer((_) async => counterModel);
+        // act
+        final result = await counterRepositoryImpl.getCachedCounter();
+        // assert
+        verifyZeroInteractions(mockCounterRemoteDataSource);
+        verify(mockCounterLocalDataSource.getCounter());
+        expect(result, equals(Right(counter)));
+      },
+    );
+
+    test(
+      "should return CacheFailure when the cached data is not present",
+      () async {
+        // arrange
+        when(
+          mockCounterLocalDataSource.getCounter(),
+        ).thenThrow(CacheException());
+        // act
+        final result = await counterRepositoryImpl.getCachedCounter();
+        // assert
+        verifyZeroInteractions(mockCounterRemoteDataSource);
+        verify(mockCounterLocalDataSource.getCounter());
+        expect(result, equals(Left(CacheFailure())));
+      },
+    );
+  });
+
   group("get counter", () {
     int count = 0;
     CounterModel counterModel = CounterModel(count: count);

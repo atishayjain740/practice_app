@@ -7,6 +7,7 @@ import 'package:practice_app/core/error/failures.dart';
 import 'package:practice_app/core/usecase/usecase.dart';
 import 'package:practice_app/features/counter/domain/entities/counter.dart';
 import 'package:practice_app/features/counter/domain/usecases/decrement_counter.dart';
+import 'package:practice_app/features/counter/domain/usecases/get_cached_counter.dart';
 import 'package:practice_app/features/counter/domain/usecases/get_counter.dart';
 import 'package:practice_app/features/counter/domain/usecases/increment_counter.dart'
     as ic;
@@ -14,10 +15,16 @@ import 'package:practice_app/features/counter/presentation/bloc/counter_bloc.dar
 
 import 'counter_bloc_test.mocks.dart';
 
-@GenerateMocks([GetCounter, ic.IncrementCounter, DecrementCounter])
+@GenerateMocks([
+  GetCounter,
+  GetCachedCounter,
+  ic.IncrementCounter,
+  DecrementCounter,
+])
 void main() {
   late CounterBloc counterBloc;
   late MockGetCounter mockGetCounter;
+  late MockGetCachedCounter mockGetCachedCounter;
   late MockIncrementCounter mockIncrementCounter;
   late MockDecrementCounter mockDecrementCounter;
 
@@ -27,10 +34,12 @@ void main() {
     mockGetCounter = MockGetCounter();
     mockIncrementCounter = MockIncrementCounter();
     mockDecrementCounter = MockDecrementCounter();
+    mockGetCachedCounter = MockGetCachedCounter();
     counterBloc = CounterBloc(
       getCounter: mockGetCounter,
       incrementCounter: mockIncrementCounter,
       decrementCounter: mockDecrementCounter,
+      getCachedCounter: mockGetCachedCounter,
     );
   });
 
@@ -40,6 +49,38 @@ void main() {
 
   test('Initial state should be CounterEmpty', () {
     expect(counterBloc.state, CounterEmpty());
+  });
+
+  group('initial count', () {
+    blocTest<CounterBloc, CounterState>(
+      'Emits [CounterLoading, CounterEmpty] when GetCachedCounterEvent fails',
+      build: () {
+        when(
+          mockGetCachedCounter(NoParams()),
+        ).thenAnswer((_) async => Left(CacheFailure()));
+        return counterBloc;
+      },
+      act: (bloc) => bloc.add(GetCachedCountEvent()),
+      expect: () => [CounterLoading(), CounterEmpty()],
+      verify: (_) {
+        verify(mockGetCachedCounter(NoParams())).called(1);
+      },
+    );
+
+    blocTest<CounterBloc, CounterState>(
+      'Emits [CounterLoading, CounterLoaded] when GetCachedCounterEvent succeeds',
+      build: () {
+        when(
+          mockGetCachedCounter(NoParams()),
+        ).thenAnswer((_) async => Right(counter));
+        return counterBloc;
+      },
+      act: (bloc) => bloc.add(GetCachedCountEvent()),
+      expect: () => [CounterLoading(), CounterLoaded(counter: counter)],
+      verify: (_) {
+        verify(mockGetCachedCounter(NoParams())).called(1);
+      },
+    );
   });
 
   blocTest<CounterBloc, CounterState>(

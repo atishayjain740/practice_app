@@ -50,4 +50,14 @@ class CounterRepositoryImpl implements CounterRepository {
       return Left(CacheFailure());
     }
   }
+
+  @override
+  Future<Either<Failure, Counter>> getCachedCounter() async {
+    try {
+      final cachedData = await counterLocalDataSource.getCounter();
+      return Right(cachedData);
+    } on CacheException {
+      return Left(CacheFailure());
+    }
+  }
 }

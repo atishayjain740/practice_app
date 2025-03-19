@@ -14,11 +14,13 @@ import 'package:practice_app/features/counter/domain/entities/counter.dart'
 import 'package:practice_app/features/counter/domain/repositories/counter_repository.dart'
     as _i2;
 import 'package:practice_app/features/counter/domain/usecases/decrement_counter.dart'
-    as _i10;
+    as _i11;
+import 'package:practice_app/features/counter/domain/usecases/get_cached_counter.dart'
+    as _i9;
 import 'package:practice_app/features/counter/domain/usecases/get_counter.dart'
     as _i4;
 import 'package:practice_app/features/counter/domain/usecases/increment_counter.dart'
-    as _i9;
+    as _i10;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -78,10 +80,43 @@ class MockGetCounter extends _i1.Mock implements _i4.GetCounter {
           as _i5.Future<_i3.Either<_i6.Failure, _i7.Counter>>);
 }
 
+/// A class which mocks [GetCachedCounter].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockGetCachedCounter extends _i1.Mock implements _i9.GetCachedCounter {
+  MockGetCachedCounter() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i2.CounterRepository get counterRepository =>
+      (super.noSuchMethod(
+            Invocation.getter(#counterRepository),
+            returnValue: _FakeCounterRepository_0(
+              this,
+              Invocation.getter(#counterRepository),
+            ),
+          )
+          as _i2.CounterRepository);
+
+  @override
+  _i5.Future<_i3.Either<_i6.Failure, _i7.Counter>> call(_i8.NoParams? params) =>
+      (super.noSuchMethod(
+            Invocation.method(#call, [params]),
+            returnValue: _i5.Future<_i3.Either<_i6.Failure, _i7.Counter>>.value(
+              _FakeEither_1<_i6.Failure, _i7.Counter>(
+                this,
+                Invocation.method(#call, [params]),
+              ),
+            ),
+          )
+          as _i5.Future<_i3.Either<_i6.Failure, _i7.Counter>>);
+}
+
 /// A class which mocks [IncrementCounter].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockIncrementCounter extends _i1.Mock implements _i9.IncrementCounter {
+class MockIncrementCounter extends _i1.Mock implements _i10.IncrementCounter {
   MockIncrementCounter() {
     _i1.throwOnMissingStub(this);
   }
@@ -98,7 +133,7 @@ class MockIncrementCounter extends _i1.Mock implements _i9.IncrementCounter {
           as _i2.CounterRepository);
 
   @override
-  _i5.Future<_i3.Either<_i6.Failure, _i7.Counter>> call(_i9.Params? params) =>
+  _i5.Future<_i3.Either<_i6.Failure, _i7.Counter>> call(_i10.Params? params) =>
       (super.noSuchMethod(
             Invocation.method(#call, [params]),
             returnValue: _i5.Future<_i3.Either<_i6.Failure, _i7.Counter>>.value(
@@ -114,7 +149,7 @@ class MockIncrementCounter extends _i1.Mock implements _i9.IncrementCounter {
 /// A class which mocks [DecrementCounter].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockDecrementCounter extends _i1.Mock implements _i10.DecrementCounter {
+class MockDecrementCounter extends _i1.Mock implements _i11.DecrementCounter {
   MockDecrementCounter() {
     _i1.throwOnMissingStub(this);
   }
@@ -131,7 +166,7 @@ class MockDecrementCounter extends _i1.Mock implements _i10.DecrementCounter {
           as _i2.CounterRepository);
 
   @override
-  _i5.Future<_i3.Either<_i6.Failure, _i7.Counter>> call(_i10.Params? params) =>
+  _i5.Future<_i3.Either<_i6.Failure, _i7.Counter>> call(_i11.Params? params) =>
       (super.noSuchMethod(
             Invocation.method(#call, [params]),
             returnValue: _i5.Future<_i3.Either<_i6.Failure, _i7.Counter>>.value(

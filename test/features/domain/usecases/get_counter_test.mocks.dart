@@ -54,6 +54,19 @@ class MockCounterRepository extends _i1.Mock implements _i3.CounterRepository {
           as _i4.Future<_i2.Either<_i5.Failure, _i6.Counter>>);
 
   @override
+  _i4.Future<_i2.Either<_i5.Failure, _i6.Counter>> getCachedCounter() =>
+      (super.noSuchMethod(
+            Invocation.method(#getCachedCounter, []),
+            returnValue: _i4.Future<_i2.Either<_i5.Failure, _i6.Counter>>.value(
+              _FakeEither_0<_i5.Failure, _i6.Counter>(
+                this,
+                Invocation.method(#getCachedCounter, []),
+              ),
+            ),
+          )
+          as _i4.Future<_i2.Either<_i5.Failure, _i6.Counter>>);
+
+  @override
   _i4.Future<_i2.Either<_i5.Failure, _i6.Counter>> saveCounter(
     _i6.Counter? counter,
   ) =>

@@ -18,6 +18,8 @@ class CounterPage extends StatelessWidget {
 class CounterView extends StatelessWidget {
   String _count = "";
 
+  CounterView({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:practice_app/features/counter/presentation/bloc/counter_bloc.dart';
+import 'package:practice_app/features/counter/presentation/widgets/circular_icon_button.dart';
+import 'package:practice_app/features/counter/presentation/widgets/custom_button.dart';
+import 'package:practice_app/features/counter/presentation/widgets/display_text.dart';
 import 'package:practice_app/injection_container.dart';
 
 class CounterPage extends StatelessWidget {
@@ -16,9 +19,10 @@ class CounterPage extends StatelessWidget {
 }
 
 class CounterView extends StatelessWidget {
-  String _count = "";
+  final String _strInitialText = "Start searching !";
+  final String _strRandomBtnText = "Get random counter";
 
-  CounterView({super.key});
+  const CounterView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -30,50 +34,63 @@ class CounterView extends StatelessWidget {
           children: [
             BlocBuilder<CounterBloc, CounterState>(
               builder: (context, state) {
-                if (state is CounterEmpty) {
-                  return Text(
-                    "Start searching",
-                    style: TextStyle(fontSize: 25),
-                  );
-                } else if (state is CounterError) {
-                  return Text(state.message, style: TextStyle(fontSize: 25));
-                } else if (state is CounterLoading) {
-                  return CircularProgressIndicator();
-                } else if (state is CounterLoaded) {
-                  _count = state.counter.count.toString();
-                  return Text(_count, style: TextStyle(fontSize: 25));
-                }
-                return Container();
+                return _buildCounterText(state);
               },
             ),
             const SizedBox(height: 100),
-            ElevatedButton(
+            CustomButton(
               onPressed: () {
                 context.read<CounterBloc>().add(GetCountEvent());
               },
-              child: Text("Get random counter"),
+              text: _strRandomBtnText,
             ),
+
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                context.read<CounterBloc>().add(
-                  IncrementCountEvent(count: _count),
+            BlocBuilder<CounterBloc, CounterState>(
+              builder: (context, state) {
+                final count = (state is CounterLoaded) ? state.counter.count.toString() : "";
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularIconButton(
+                      onPressed: () {
+                        if (state is CounterLoaded) {
+                        context.read<CounterBloc>().add(
+                          IncrementCountEvent(count: count),
+                        );
+                        }
+                      },
+                      icon: Icons.add,
+                    ),
+                    const SizedBox(width: 20),
+                    CircularIconButton(
+                      onPressed: () {
+                        context.read<CounterBloc>().add(
+                          DecrementCountEvent(count: count),
+                        );
+                      },
+                      icon: Icons.remove,
+                    ),
+                  ],
                 );
-              },
-              child: Text("Increment count"),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                context.read<CounterBloc>().add(
-                  DecrementCountEvent(count: _count),
-                );
-              },
-              child: Text("Decrement count"),
+              }
             ),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildCounterText(CounterState state) {
+    switch (state) {
+      case CounterEmpty():
+        return DisplayText(text: _strInitialText);
+      case CounterError():
+        return DisplayText(text: state.message);
+      case CounterLoading():
+        return const CircularProgressIndicator(padding: EdgeInsets.all(7),);
+      case CounterLoaded():
+        return DisplayText(text: state.counter.count.toString());
+      }
   }
 }

@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:practice_app/core/constants/dummy_url.dart';
 import 'package:practice_app/features/counter/data/datasources/counter_remote_data_source.dart';
 import 'package:practice_app/features/counter/data/models/counter_model.dart';
 
@@ -10,12 +10,15 @@ import '../../fixtures/fixture_reader.dart';
 import 'package:practice_app/core/error/exceptions.dart';
 import 'package:http/http.dart' as http;
 
-import 'counter_remote_data_source_test.mocks.dart';
 
-@GenerateMocks([http.Client])
+class MockClient extends Mock implements http.Client{}
 void main() {
   late MockClient mockClient;
   late CounterRemoteDataSourceImpl dataSource;
+
+  setUpAll((){
+    registerFallbackValue(Uri.parse(dummyUrl));
+  });
 
   setUp(() {
     mockClient = MockClient();
@@ -24,13 +27,13 @@ void main() {
 
   void setUpSuccessHttpGetRequest() {
     when(
-      mockClient.get(any, headers: anyNamed('headers')),
+      () => mockClient.get(any(), headers: any(named: 'headers')),
     ).thenAnswer((_) async => http.Response(fixture('counter.json'), 200));
   }
 
   void setUpFailureHttpGetRequest() {
     when(
-      mockClient.get(any, headers: anyNamed('headers')),
+      () => mockClient.get(any(), headers: any(named: 'headers')),
     ).thenAnswer((_) async => http.Response('something went wrong', 404));
   }
 
@@ -48,7 +51,7 @@ void main() {
         dataSource.getCounter();
         // assert
         verify(
-          mockClient.get(
+          () => mockClient.get(
             Uri.parse(
               'https://www.randomnumberapi.com/api/v1.0/random?min=1&max=100&count=1',
             ),

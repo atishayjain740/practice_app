@@ -1,8 +1,8 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:practice_app/core/constants/dummy_url.dart';
 import 'package:practice_app/core/error/failures.dart';
 import 'package:practice_app/core/usecase/usecase.dart';
 import 'package:practice_app/features/counter/domain/entities/counter.dart';
@@ -15,14 +15,12 @@ import 'package:practice_app/features/counter/presentation/bloc/counter_bloc.dar
 import 'package:practice_app/features/counter/presentation/bloc/counter_event.dart';
 import 'package:practice_app/features/counter/presentation/bloc/counter_state.dart';
 
-import 'counter_bloc_test.mocks.dart';
 
-@GenerateMocks([
-  GetCounter,
-  GetCachedCounter,
-  ic.IncrementCounter,
-  DecrementCounter,
-])
+class MockGetCounter extends Mock implements GetCounter{}
+class MockGetCachedCounter extends Mock implements GetCachedCounter{}
+class MockIncrementCounter extends Mock implements ic.IncrementCounter{}
+class MockDecrementCounter extends Mock implements DecrementCounter{}
+
 void main() {
   late CounterBloc counterBloc;
   late MockGetCounter mockGetCounter;
@@ -32,6 +30,11 @@ void main() {
 
   const int count = 0;
   Counter counter = Counter(count: count);
+
+  setUpAll((){
+    registerFallbackValue(Uri.parse(dummyUrl));
+  });
+
   setUp(() {
     mockGetCounter = MockGetCounter();
     mockIncrementCounter = MockIncrementCounter();
@@ -58,14 +61,14 @@ void main() {
       'Emits [CounterLoading, CounterEmpty] when GetCachedCounterEvent fails',
       build: () {
         when(
-          mockGetCachedCounter(NoParams()),
+          () => mockGetCachedCounter(NoParams()),
         ).thenAnswer((_) async => Left(CacheFailure()));
         return counterBloc;
       },
       act: (bloc) => bloc.add(GetCachedCountEvent()),
       expect: () => [CounterLoading(), CounterEmpty()],
       verify: (_) {
-        verify(mockGetCachedCounter(NoParams())).called(1);
+        verify(() => mockGetCachedCounter(NoParams())).called(1);
       },
     );
 
@@ -73,14 +76,14 @@ void main() {
       'Emits [CounterLoading, CounterLoaded] when GetCachedCounterEvent succeeds',
       build: () {
         when(
-          mockGetCachedCounter(NoParams()),
+          () => mockGetCachedCounter(NoParams()),
         ).thenAnswer((_) async => Right(counter));
         return counterBloc;
       },
       act: (bloc) => bloc.add(GetCachedCountEvent()),
       expect: () => [CounterLoading(), CounterLoaded(counter: counter)],
       verify: (_) {
-        verify(mockGetCachedCounter(NoParams())).called(1);
+        verify(() => mockGetCachedCounter(NoParams())).called(1);
       },
     );
   });
@@ -89,14 +92,14 @@ void main() {
     'Emits [CounterLoading, CounterLoaded] when counter found in cache',
     build: () {
       when(
-        mockGetCounter(NoParams()),
+        () => mockGetCounter(NoParams()),
       ).thenAnswer((_) async => Right(Counter(count: 0)));
       return counterBloc;
     },
     act: (bloc) => bloc.add(GetCountEvent()),
     expect: () => [CounterLoading(), CounterLoaded(counter: counter)],
     verify: (_) {
-      verify(mockGetCounter(NoParams())).called(1);
+      verify(() => mockGetCounter(NoParams())).called(1);
     },
   );
 
@@ -104,14 +107,14 @@ void main() {
     'Emits [CounterLoading, CounterLoaded] when GetCounterEvent succeeds',
     build: () {
       when(
-        mockGetCounter(NoParams()),
+        () => mockGetCounter(NoParams()),
       ).thenAnswer((_) async => Right(Counter(count: 0)));
       return counterBloc;
     },
     act: (bloc) => bloc.add(GetCountEvent()),
     expect: () => [CounterLoading(), CounterLoaded(counter: counter)],
     verify: (_) {
-      verify(mockGetCounter(NoParams())).called(1);
+      verify(() => mockGetCounter(NoParams())).called(1);
     },
   );
 
@@ -119,7 +122,7 @@ void main() {
     'Emits [CounterLoading, CounterError] when GetCounterEvent fails',
     build: () {
       when(
-        mockGetCounter(NoParams()),
+        () => mockGetCounter(NoParams()),
       ).thenAnswer((_) async => Left(ServerFailure()));
       return counterBloc;
     },
@@ -130,7 +133,7 @@ void main() {
           CounterError(message: "Failed to load counter"),
         ],
     verify: (_) {
-      verify(mockGetCounter(NoParams())).called(1);
+      verify(() => mockGetCounter(NoParams())).called(1);
     },
   );
 
@@ -140,14 +143,14 @@ void main() {
       'Emits [CounterLoading, CounterLoaded] when IncrementCount succeeds',
       build: () {
         when(
-          mockIncrementCounter(any),
+          () => mockIncrementCounter(ic.Params(counter: counter)),
         ).thenAnswer((_) async => Right(expectedCounter));
         return counterBloc;
       },
       act: (bloc) => bloc.add(IncrementCountEvent(count: count.toString())),
       expect: () => [CounterLoading(), CounterLoaded(counter: expectedCounter)],
       verify: (_) {
-        verify(mockIncrementCounter(ic.Params(counter: counter))).called(1);
+        verify(() => mockIncrementCounter(ic.Params(counter: counter))).called(1);
       },
     );
 
@@ -155,7 +158,7 @@ void main() {
       'Emits [CounterLoading, CounterError] when IncrementCount fails',
       build: () {
         when(
-          mockIncrementCounter(any),
+          () => mockIncrementCounter(ic.Params(counter: counter)),
         ).thenAnswer((_) async => Left(CacheFailure()));
         return counterBloc;
       },
@@ -166,7 +169,7 @@ void main() {
             CounterError(message: "Failed to increment."),
           ],
       verify: (_) {
-        verify(mockIncrementCounter(ic.Params(counter: counter))).called(1);
+        verify(() => mockIncrementCounter(ic.Params(counter: counter))).called(1);
       },
     );
   });
@@ -177,14 +180,14 @@ void main() {
       'Emits [CounterLoading, CounterLoaded] when DecrementCount succeeds',
       build: () {
         when(
-          mockDecrementCounter(any),
+          () => mockDecrementCounter(Params(counter: counter)),
         ).thenAnswer((_) async => Right(expectedCounter));
         return counterBloc;
       },
       act: (bloc) => bloc.add(DecrementCountEvent(count: count.toString())),
       expect: () => [CounterLoading(), CounterLoaded(counter: expectedCounter)],
       verify: (_) {
-        verify(mockDecrementCounter(Params(counter: counter))).called(1);
+        verify(() => mockDecrementCounter(Params(counter: counter))).called(1);
       },
     );
 
@@ -192,7 +195,7 @@ void main() {
       'Emits [CounterLoading, CounterError] when DecrementCount fails',
       build: () {
         when(
-          mockDecrementCounter(any),
+          () => mockDecrementCounter(Params(counter: counter)),
         ).thenAnswer((_) async => Left(CacheFailure()));
         return counterBloc;
       },
@@ -203,7 +206,7 @@ void main() {
             CounterError(message: "Failed to decrement."),
           ],
       verify: (_) {
-        verify(mockDecrementCounter(Params(counter: counter))).called(1);
+        verify(() => mockDecrementCounter(Params(counter: counter))).called(1);
       },
     );
   });

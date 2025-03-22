@@ -1,7 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:practice_app/core/error/exceptions.dart';
 import 'package:practice_app/core/error/failures.dart';
 import 'package:practice_app/core/network/netrwork_info.dart';
@@ -11,14 +10,18 @@ import 'package:practice_app/features/counter/data/models/counter_model.dart';
 import 'package:practice_app/features/counter/data/repositories/counter_repository_impl.dart';
 import 'package:practice_app/features/counter/domain/entities/counter.dart';
 
-import 'counter_repository_impl_test.mocks.dart';
 
-@GenerateMocks([CounterLocalDataSource, CounterRemoteDataSource, NetworkInfo])
+class MockCounterLocalDataSource extends Mock implements CounterLocalDataSource {}
+class MockCounterRemoteDataSource extends Mock implements CounterRemoteDataSource {}
+class MockNetworkInfo extends Mock implements NetworkInfo{}
+
 void main() {
   late CounterRepositoryImpl counterRepositoryImpl;
   late MockCounterLocalDataSource mockCounterLocalDataSource;
   late MockCounterRemoteDataSource mockCounterRemoteDataSource;
   late MockNetworkInfo mockNetworkInfo;
+
+  
 
   setUp(() {
     mockCounterLocalDataSource = MockCounterLocalDataSource();
@@ -41,13 +44,13 @@ void main() {
       () async {
         // arrange
         when(
-          mockCounterLocalDataSource.getCounter(),
+          () => mockCounterLocalDataSource.getCounter(),
         ).thenAnswer((_) async => counterModel);
         // act
         final result = await counterRepositoryImpl.getCachedCounter();
         // assert
         verifyZeroInteractions(mockCounterRemoteDataSource);
-        verify(mockCounterLocalDataSource.getCounter());
+        verify(() => mockCounterLocalDataSource.getCounter());
         expect(result, equals(Right(counter)));
       },
     );
@@ -57,13 +60,13 @@ void main() {
       () async {
         // arrange
         when(
-          mockCounterLocalDataSource.getCounter(),
+          () => mockCounterLocalDataSource.getCounter(),
         ).thenThrow(CacheException());
         // act
         final result = await counterRepositoryImpl.getCachedCounter();
         // assert
         verifyZeroInteractions(mockCounterRemoteDataSource);
-        verify(mockCounterLocalDataSource.getCounter());
+        verify(() => mockCounterLocalDataSource.getCounter());
         expect(result, equals(Left(CacheFailure())));
       },
     );
@@ -76,59 +79,79 @@ void main() {
 
     test("should check if the device is online", () async {
       // arrange
-      when(mockNetworkInfo.isConnected).thenAnswer((_) async => true);
+      when(() => mockNetworkInfo.isConnected).thenAnswer((_) async => true);
       when(
-        mockCounterRemoteDataSource.getCounter(),
+        () => mockCounterRemoteDataSource.getCounter(),
       ).thenAnswer((_) async => counterModel);
+      when(
+          () => mockCounterLocalDataSource.cacheCounter(counterModel),
+          ).thenAnswer((_) async => true);
       // act
       await counterRepositoryImpl.getCounter();
       // assert
-      verify(mockNetworkInfo.isConnected);
+      verify(() => mockNetworkInfo.isConnected);
     });
 
     test("should save the counter and return it", () async {
       // arrange
       when(
-        mockCounterLocalDataSource.getCounter(),
+        () => mockCounterLocalDataSource.getCounter(),
       ).thenAnswer((_) async => counterModel);
+       when(
+          () => mockCounterLocalDataSource.cacheCounter(counterModel),
+          ).thenAnswer((_) async => true);
       // act
       final result = await counterRepositoryImpl.saveCounter(counterModel);
       // assert
       verifyZeroInteractions(mockCounterRemoteDataSource);
-      verify(mockCounterLocalDataSource.cacheCounter(counterModel));
+      verify(() => mockCounterLocalDataSource.cacheCounter(counterModel));
       expect(result, equals(Right(counter)));
     });
 
     test("should return failure when caching data is unsuccesfull", () async {
       // arrange
       when(
-        mockCounterLocalDataSource.cacheCounter(counterModel),
+        () => mockCounterLocalDataSource.cacheCounter(counterModel),
       ).thenThrow(CacheException());
 
       // act
       final result = await counterRepositoryImpl.saveCounter(counterModel);
       // assert
-      verify(mockCounterLocalDataSource.cacheCounter(counterModel));
+      verify(() => mockCounterLocalDataSource.cacheCounter(counterModel));
       verifyZeroInteractions(mockCounterRemoteDataSource);
       expect(result, Left(CacheFailure()));
     });
 
     group("device online", () {
       setUp(() {
-        when(mockNetworkInfo.isConnected).thenAnswer((_) async => true);
+        when(() => mockNetworkInfo.isConnected).thenAnswer((_) async => true);
       });
+
+      void setUpSuccessRemoteDataCall() {
+        when(
+          () => mockCounterRemoteDataSource.getCounter(),
+          ).thenAnswer((_) async => counterModel);
+
+          when(
+          () => mockCounterLocalDataSource.cacheCounter(counterModel),
+          ).thenAnswer((_) async => true);
+      }
+
+      void setUpFailureRemoteDataCall() {
+        when(
+            () => mockCounterRemoteDataSource.getCounter(),
+          ).thenThrow(ServerException());
+      }
 
       test(
         "should return remote data when call to remote data is success",
         () async {
           // arrange
-          when(
-            mockCounterRemoteDataSource.getCounter(),
-          ).thenAnswer((_) async => counterModel);
+          setUpSuccessRemoteDataCall();
           // act
           final result = await counterRepositoryImpl.getCounter();
           // assert
-          verify(mockCounterRemoteDataSource.getCounter());
+          verify(() => mockCounterRemoteDataSource.getCounter());
           expect(result, equals(Right(counter)));
         },
       );
@@ -137,13 +160,12 @@ void main() {
         "should cache remote data locally when call to remote data is success",
         () async {
           // arrange
-          when(
-            mockCounterRemoteDataSource.getCounter(),
-          ).thenAnswer((_) async => counterModel);
+          setUpSuccessRemoteDataCall();
+
           // act
           await counterRepositoryImpl.getCounter();
           // assert
-          verify(mockCounterLocalDataSource.cacheCounter(counterModel));
+          verify(() => mockCounterLocalDataSource.cacheCounter(counterModel));
         },
       );
 
@@ -151,13 +173,11 @@ void main() {
         "should return server exception when call to remote data is unsuccessful",
         () async {
           // arrange
-          when(
-            mockCounterRemoteDataSource.getCounter(),
-          ).thenThrow(ServerException());
+          setUpFailureRemoteDataCall();
           // act
           final result = await counterRepositoryImpl.getCounter();
           // assert
-          verify(mockCounterRemoteDataSource.getCounter());
+          verify(() => mockCounterRemoteDataSource.getCounter());
           verifyZeroInteractions(mockCounterLocalDataSource);
           expect(result, Left(ServerFailure()));
         },
@@ -166,7 +186,7 @@ void main() {
 
     group("device offline", () {
       setUp(() {
-        when(mockNetworkInfo.isConnected).thenAnswer((_) async => false);
+        when(() => mockNetworkInfo.isConnected).thenAnswer((_) async => false);
       });
 
       test(
@@ -174,13 +194,13 @@ void main() {
         () async {
           // arrange
           when(
-            mockCounterLocalDataSource.getCounter(),
+            () => mockCounterLocalDataSource.getCounter(),
           ).thenAnswer((_) async => counterModel);
           // act
           final result = await counterRepositoryImpl.getCounter();
           // assert
           verifyZeroInteractions(mockCounterRemoteDataSource);
-          verify(mockCounterLocalDataSource.getCounter());
+          verify(() => mockCounterLocalDataSource.getCounter());
           expect(result, equals(Right(counter)));
         },
       );
@@ -190,13 +210,13 @@ void main() {
         () async {
           // arrange
           when(
-            mockCounterLocalDataSource.getCounter(),
+            () => mockCounterLocalDataSource.getCounter(),
           ).thenThrow(CacheException());
           // act
           final result = await counterRepositoryImpl.getCounter();
           // assert
           verifyZeroInteractions(mockCounterRemoteDataSource);
-          verify(mockCounterLocalDataSource.getCounter());
+          verify(() => mockCounterLocalDataSource.getCounter());
           expect(result, equals(Left(CacheFailure())));
         },
       );

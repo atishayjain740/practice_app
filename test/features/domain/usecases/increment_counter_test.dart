@@ -1,15 +1,13 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:practice_app/core/error/failures.dart';
 import 'package:practice_app/features/counter/domain/entities/counter.dart';
 import 'package:practice_app/features/counter/domain/repositories/counter_repository.dart';
-import 'package:mockito/annotations.dart';
 import 'package:practice_app/features/counter/domain/usecases/increment_counter.dart';
 
-import 'increment_counter_test.mocks.dart';
+class MockCounterRepository extends Mock implements CounterRepository{}
 
-@GenerateMocks([CounterRepository])
 void main() {
   late MockCounterRepository mockCounterRepository;
   late IncrementCounter useCase;
@@ -24,12 +22,12 @@ void main() {
     Counter expectedCounter = Counter(count: 1);
     // arrange
     when(
-      mockCounterRepository.saveCounter(expectedCounter),
+      () => mockCounterRepository.saveCounter(expectedCounter),
     ).thenAnswer((_) async => Right(expectedCounter));
     // act
     final result = await useCase(Params(counter: initialCounter));
     // assert
-    verify(mockCounterRepository.saveCounter(expectedCounter));
+    verify(() => mockCounterRepository.saveCounter(expectedCounter));
     expect(result, Right(expectedCounter));
   });
 
@@ -38,12 +36,12 @@ void main() {
     Counter expectedCounter = Counter(count: 1);
     // arrange
     when(
-      mockCounterRepository.saveCounter(expectedCounter),
+      () => mockCounterRepository.saveCounter(expectedCounter),
     ).thenAnswer((_) async => Left(CacheFailure()));
     // act
     final result = await useCase(Params(counter: initialCounter));
     // assert
-    verify(mockCounterRepository.saveCounter(expectedCounter));
+    verify(() => mockCounterRepository.saveCounter(expectedCounter));
     expect(result, Left(CacheFailure()));
   });
 }

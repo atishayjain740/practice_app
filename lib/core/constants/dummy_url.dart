@@ -1,0 +1,1 @@
+const dummyUrl = 'https://example.com';

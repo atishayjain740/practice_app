@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:practice_app/features/counter/presentation/bloc/counter_bloc.dart';
+import 'package:practice_app/features/counter/presentation/bloc/counter_event.dart';
+import 'package:practice_app/features/counter/presentation/bloc/counter_state.dart';
 import 'package:practice_app/features/counter/presentation/widgets/circular_icon_button.dart';
 import 'package:practice_app/features/counter/presentation/widgets/custom_button.dart';
 import 'package:practice_app/features/counter/presentation/widgets/display_text.dart';
@@ -91,6 +93,8 @@ class CounterView extends StatelessWidget {
         return const CircularProgressIndicator(padding: EdgeInsets.all(7),);
       case CounterLoaded():
         return DisplayText(text: state.counter.count.toString());
+      default:
+        return Container();
       }
   }
 }

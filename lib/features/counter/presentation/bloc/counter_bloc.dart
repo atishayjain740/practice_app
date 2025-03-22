@@ -1,5 +1,4 @@
 import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
 import 'package:practice_app/core/error/failures.dart';
 import 'package:practice_app/core/usecase/usecase.dart';
 import 'package:practice_app/features/counter/domain/entities/counter.dart';
@@ -8,9 +7,9 @@ import 'package:practice_app/features/counter/domain/usecases/get_cached_counter
 import 'package:practice_app/features/counter/domain/usecases/get_counter.dart';
 import 'package:practice_app/features/counter/domain/usecases/increment_counter.dart'
     as ic;
+import 'package:practice_app/features/counter/presentation/bloc/counter_event.dart';
+import 'package:practice_app/features/counter/presentation/bloc/counter_state.dart';
 
-part 'counter_event.dart';
-part 'counter_state.dart';
 
 class CounterBloc extends Bloc<CounterEvent, CounterState> {
   final GetCounter getCounter;

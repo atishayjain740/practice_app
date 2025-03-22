@@ -12,6 +12,8 @@ import 'package:practice_app/features/counter/domain/usecases/get_counter.dart';
 import 'package:practice_app/features/counter/domain/usecases/increment_counter.dart'
     as ic;
 import 'package:practice_app/features/counter/presentation/bloc/counter_bloc.dart';
+import 'package:practice_app/features/counter/presentation/bloc/counter_event.dart';
+import 'package:practice_app/features/counter/presentation/bloc/counter_state.dart';
 
 import 'counter_bloc_test.mocks.dart';
 

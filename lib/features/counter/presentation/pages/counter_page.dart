@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:practice_app/features/counter/presentation/bloc/counter_bloc.dart';
 import 'package:practice_app/features/counter/presentation/bloc/counter_event.dart';
 import 'package:practice_app/features/counter/presentation/bloc/counter_state.dart';
@@ -29,7 +30,13 @@ class CounterView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Counter")),
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () => GoRouter.of(context).pop(),
+        ),
+        title: Text("Counter"),
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -50,16 +57,19 @@ class CounterView extends StatelessWidget {
             const SizedBox(height: 20),
             BlocBuilder<CounterBloc, CounterState>(
               builder: (context, state) {
-                final count = (state is CounterLoaded) ? state.counter.count.toString() : "";
+                final count =
+                    (state is CounterLoaded)
+                        ? state.counter.count.toString()
+                        : "";
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     CircularIconButton(
                       onPressed: () {
                         if (state is CounterLoaded) {
-                        context.read<CounterBloc>().add(
-                          IncrementCountEvent(count: count),
-                        );
+                          context.read<CounterBloc>().add(
+                            IncrementCountEvent(count: count),
+                          );
                         }
                       },
                       icon: Icons.add,
@@ -75,7 +85,7 @@ class CounterView extends StatelessWidget {
                     ),
                   ],
                 );
-              }
+              },
             ),
           ],
         ),
@@ -90,11 +100,11 @@ class CounterView extends StatelessWidget {
       case CounterError():
         return DisplayText(text: state.message);
       case CounterLoading():
-        return const CircularProgressIndicator(padding: EdgeInsets.all(7),);
+        return const CircularProgressIndicator(padding: EdgeInsets.all(7));
       case CounterLoaded():
         return DisplayText(text: state.counter.count.toString());
       default:
         return Container();
-      }
+    }
   }
 }

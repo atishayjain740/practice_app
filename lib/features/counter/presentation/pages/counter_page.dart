@@ -22,6 +22,7 @@ class CounterPage extends StatelessWidget {
 }
 
 class CounterView extends StatelessWidget {
+  final String _strCounter = 'Counter';
   final String _strInitialText = "Start searching !";
   final String _strRandomBtnText = "Get random counter";
 
@@ -35,7 +36,7 @@ class CounterView extends StatelessWidget {
           icon: Icon(Icons.arrow_back),
           onPressed: () => GoRouter.of(context).pop(),
         ),
-        title: Text("Counter"),
+        title: Text(_strCounter),
       ),
       body: Center(
         child: Column(

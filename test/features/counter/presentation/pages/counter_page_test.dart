@@ -19,6 +19,7 @@ void main() {
   Counter counter = Counter(count: count);
   const String strInitialText = "Start searching !";
   const String strError = "Error message";
+  const String strEmpty = "";
 
   setUp(() {
     mockCounterBloc = MockCounterBloc();
@@ -167,6 +168,48 @@ void main() {
     verify(() => mockCounterBloc.add(DecrementCountEvent(count: count.toString()))).called(1);
   });
 
-  
+  testWidgets('Increment button pressed with empty string when no integer value present to increment at the time of CounterEmpty state', (WidgetTester tester) async {
+    // Arrange
+    when(() => mockCounterBloc.state).thenReturn(CounterEmpty());
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: BlocProvider<CounterBloc>.value(
+          value: mockCounterBloc,
+          child: const CounterView(),
+        ),
+      ),
+    );
+
+    // Act
+    await tester.tap(find.byIcon(Icons.add));
+    await tester.pump();
+
+    // Assert
+    expect(find.byIcon(Icons.add), findsOneWidget);
+    verify(() => mockCounterBloc.add(IncrementCountEvent(count: strEmpty))).called(1);
+  });
+
+  testWidgets('Decrement button pressed with empty string when no integer value present to decrement at the time of CounterEmpty state', (WidgetTester tester) async {
+    // Arrange
+    when(() => mockCounterBloc.state).thenReturn(CounterEmpty());
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: BlocProvider<CounterBloc>.value(
+          value: mockCounterBloc,
+          child: const CounterView(),
+        ),
+      ),
+    );
+
+    // Act
+    await tester.tap(find.byIcon(Icons.remove));
+    await tester.pump();
+
+    // Assert
+    expect(find.byIcon(Icons.remove), findsOneWidget);
+    verify(() => mockCounterBloc.add(DecrementCountEvent(count: strEmpty))).called(1);
+  });
 }
 

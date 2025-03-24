@@ -155,6 +155,16 @@ void main() {
     );
 
     blocTest<CounterBloc, CounterState>(
+    'emits [CounterLoading, CounterError] when given invalid integer fails',
+    build: () => counterBloc,
+    act: (bloc) => bloc.add(IncrementCountEvent(count: '')), // Pass an invalid string
+    expect: () => [
+      CounterLoading(),
+      CounterError(message: 'Could not increment. Try searching'),
+    ],
+  );
+
+    blocTest<CounterBloc, CounterState>(
       'Emits [CounterLoading, CounterError] when IncrementCount fails',
       build: () {
         when(

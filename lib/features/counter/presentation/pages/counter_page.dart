@@ -66,11 +66,9 @@ class CounterView extends StatelessWidget {
                   children: [
                     CircularIconButton(
                       onPressed: () {
-                        if (state is CounterLoaded) {
                           context.read<CounterBloc>().add(
                             IncrementCountEvent(count: count),
                           );
-                        }
                       },
                       icon: Icons.add,
                     ),

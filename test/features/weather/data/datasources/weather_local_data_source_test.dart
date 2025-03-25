@@ -5,7 +5,6 @@ import 'package:mocktail/mocktail.dart';
 import 'package:practice_app/core/error/exceptions.dart';
 import 'package:practice_app/features/weather/data/datasources/weather_local_data_source.dart';
 import 'package:practice_app/features/weather/data/models/weather_model.dart';
-import 'package:practice_app/features/weather/domain/entities/weather.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../fixtures/fixture_reader.dart';

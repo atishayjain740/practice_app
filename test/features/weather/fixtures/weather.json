@@ -5,7 +5,7 @@
   "utc_offset_seconds": 0,
   "timezone": "GMT",
   "timezone_abbreviation": "GMT",
-  "elevation": 164,
+  "elevation": 164.0,
   "current_weather_units": {
     "time": "iso8601",
     "interval": "seconds",

@@ -37,29 +37,32 @@ class WeatherView extends StatelessWidget {
         ),
         title: Text(_strWeather),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: 200,
-              child: Align(
-                alignment: Alignment.center,
-                child: BlocBuilder<WeatherBloc, WeatherState>(
-                  builder: (context, state) {
-                    return _buildWeatherData(state);
-                  },
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                height: 200,
+                child: Align(
+                  alignment: Alignment.center,
+                  child: BlocBuilder<WeatherBloc, WeatherState>(
+                    builder: (context, state) {
+                      return _buildWeatherData(state);
+                    },
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 50),
-            CustomButton(
-              onPressed: () {
-                context.read<WeatherBloc>().add(GetWeatherEvent());
-              },
-              text: _strRandomBtnText,
-            ),
-          ],
+              const SizedBox(height: 50),
+              CustomButton(
+                onPressed: () {
+                  context.read<WeatherBloc>().add(GetWeatherEvent());
+                },
+                text: _strRandomBtnText,
+              ),
+            ],
+          ),
         ),
       ),
     );

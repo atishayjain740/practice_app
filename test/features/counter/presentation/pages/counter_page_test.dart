@@ -9,7 +9,7 @@ import 'package:practice_app/features/counter/presentation/bloc/counter_bloc.dar
 import 'package:practice_app/features/counter/presentation/bloc/counter_event.dart';
 import 'package:practice_app/features/counter/presentation/bloc/counter_state.dart';
 import 'package:practice_app/features/counter/presentation/pages/counter_page.dart';
-import 'package:practice_app/features/counter/presentation/widgets/custom_button.dart';
+import 'package:practice_app/core/widgets/custom_button.dart';
 
 class MockCounterBloc extends MockBloc<CounterEvent, CounterState> implements CounterBloc{}
 

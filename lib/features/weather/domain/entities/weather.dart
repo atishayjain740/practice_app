@@ -7,7 +7,7 @@ class Weather extends Equatable {
   int? utcOffsetSeconds;
   String? timezone;
   String? timezoneAbbreviation;
-  int? elevation;
+  double? elevation;
   CurrentWeatherUnits? currentWeatherUnits;
   CurrentWeather? currentWeather;
 

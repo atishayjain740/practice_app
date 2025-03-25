@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:practice_app/features/counter/presentation/widgets/custom_button.dart';
+import 'package:practice_app/core/widgets/custom_button.dart';
 
 void main() {
   testWidgets("CustomButton displays the correct text", (tester) async {

@@ -5,8 +5,8 @@ import 'package:practice_app/features/counter/presentation/bloc/counter_bloc.dar
 import 'package:practice_app/features/counter/presentation/bloc/counter_event.dart';
 import 'package:practice_app/features/counter/presentation/bloc/counter_state.dart';
 import 'package:practice_app/features/counter/presentation/widgets/circular_icon_button.dart';
-import 'package:practice_app/features/counter/presentation/widgets/custom_button.dart';
-import 'package:practice_app/features/counter/presentation/widgets/display_text.dart';
+import 'package:practice_app/core/widgets/custom_button.dart';
+import 'package:practice_app/core/widgets/display_text.dart';
 import 'package:practice_app/injection_container.dart';
 
 class CounterPage extends StatelessWidget {

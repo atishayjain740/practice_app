@@ -10,6 +10,12 @@ import 'package:practice_app/features/counter/domain/usecases/get_cached_counter
 import 'package:practice_app/features/counter/domain/usecases/get_counter.dart';
 import 'package:practice_app/features/counter/domain/usecases/increment_counter.dart';
 import 'package:practice_app/features/counter/presentation/bloc/counter_bloc.dart';
+import 'package:practice_app/features/weather/data/datasources/weather_local_data_source.dart';
+import 'package:practice_app/features/weather/data/datasources/weather_remote_data_source.dart';
+import 'package:practice_app/features/weather/data/repositories/weather_repository_impl.dart';
+import 'package:practice_app/features/weather/domain/repositories/weather_repository.dart';
+import 'package:practice_app/features/weather/domain/usecases/get_weather.dart';
+import 'package:practice_app/features/weather/presentation/bloc/weather_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -48,6 +54,34 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<CounterLocalDataSource>(
     () => CounterLocalDataSourceImpl(sharedPreferences: sl()),
+  );
+
+  // features - Weather
+  // bloc
+  sl.registerFactory(
+    () => WeatherBloc(
+      getWeather: sl(),
+    ),
+  );
+
+  // usecases
+  sl.registerLazySingleton(() => GetWeather(sl()));
+
+  // Repositories
+  sl.registerLazySingleton<WeatherRepository>(
+    () => WeatherRepositoryImpl(
+      remoteDataSource: sl(),
+      localDataSource: sl(),
+      networkInfo: sl(),
+    ),
+  );
+
+  // Datasources
+  sl.registerLazySingleton<WeatherRemoteDataSource>(
+    () => WeatherRemoteDataSourceImpl(client: sl()),
+  );
+  sl.registerLazySingleton<WeatherLocalDataSource>(
+    () => WeatherLocalDataSourceImpl(sharedPreferences: sl()),
   );
 
   // core

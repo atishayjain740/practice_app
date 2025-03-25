@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:practice_app/features/counter/presentation/widgets/display_text.dart';
+import 'package:practice_app/core/widgets/display_text.dart';
 
 void main() {
   testWidgets("DisplayText widget shows the correct text", (tester) async {

@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:practice_app/features/auth/data/models/user_model.dart';
-import 'package:practice_app/features/auth/domain/entities/user.dart';
+import 'package:practice_app/core/user/model/user_model.dart';
+import 'package:practice_app/core/user/entity/user.dart';
 
 import '../../fixtures/fixture_reader.dart';
 

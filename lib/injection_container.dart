@@ -1,6 +1,18 @@
+import 'dart:io';
+
 import 'package:get_it/get_it.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:practice_app/core/network/netrwork_info.dart';
+import 'package:practice_app/core/user/user_session_manager.dart';
+import 'package:practice_app/features/auth/data/datasources/user_local_cache_data_source.dart';
+import 'package:practice_app/features/auth/data/datasources/user_local_file_data_source.dart';
+import 'package:practice_app/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:practice_app/features/auth/domain/repositories/auth_repository.dart';
+import 'package:practice_app/features/auth/domain/usecases/sign_in.dart';
+import 'package:practice_app/features/auth/domain/usecases/sign_out.dart';
+import 'package:practice_app/features/auth/domain/usecases/sign_up.dart';
+import 'package:practice_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:practice_app/features/counter/data/datasources/counter_local_data_source.dart';
 import 'package:practice_app/features/counter/data/datasources/counter_remote_data_source.dart';
 import 'package:practice_app/features/counter/data/repositories/counter_repository_impl.dart';
@@ -22,6 +34,39 @@ import 'package:http/http.dart' as http;
 final sl = GetIt.instance;
 
 Future<void> init() async {
+  // features - Auth
+  // bloc
+  sl.registerFactory(
+    () => AuthBloc(
+      signIn: sl(),
+      signOut: sl(),
+      signUp: sl()
+    ),
+  );
+
+  // usecases
+  sl.registerLazySingleton(() => SignIn(sl()));
+  sl.registerLazySingleton(() => SignOut(sl()));
+  sl.registerLazySingleton(() => SignUp(sl()));
+
+  // Repositories
+  sl.registerLazySingleton<AuthRepository>(
+    () => AuthRepositoryImpl(
+      userSessionManager: sl(),
+      cacheDataSource: sl(),
+      fileDataSource: sl(),
+    ),
+  );
+
+  // Datasources
+  sl.registerLazySingleton<UserLocalCacheDataSource>(
+    () => UserLocalCacheDataSourceImpl(sharedPreferences: sl()),
+  );
+  sl.registerLazySingleton<UserLocalFileDataSource>(
+    () => UserLocalFileDataSourceImpl(file: sl()),
+  );
+
+
   // features - Counter
   // bloc
   sl.registerFactory(
@@ -84,16 +129,25 @@ Future<void> init() async {
     () => WeatherLocalDataSourceImpl(sharedPreferences: sl()),
   );
 
-  // core
-  sl.registerLazySingleton<NetworkInfo>(
-    () => NetworkInfoImpl(connection: sl()),
-  );
 
   // external
   final sharedPreferences = await SharedPreferences.getInstance();
-  sl.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
+  sl.registerSingleton<SharedPreferences>(sharedPreferences);
+
+  
+  Directory dir = await getApplicationDocumentsDirectory();
+  File file = File("${dir.path}/users.json");
+  sl.registerLazySingleton(() => file);
 
   sl.registerLazySingleton(() => http.Client());
 
   sl.registerLazySingleton(() => InternetConnection());
+
+  // core
+  sl.registerLazySingleton<NetworkInfo>(
+    () => NetworkInfoImpl(connection: sl()),
+  );
+  final userSession = UserSessionManager(sl());
+  await userSession.init();
+  sl.registerSingleton<UserSessionManager>(userSession);
 }

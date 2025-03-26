@@ -3,19 +3,22 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:practice_app/core/error/exceptions.dart';
 import 'package:practice_app/core/error/failures.dart';
+import 'package:practice_app/core/user/user_session_manager.dart';
 import 'package:practice_app/features/auth/data/datasources/user_local_cache_data_source.dart';
 import 'package:practice_app/features/auth/data/datasources/user_local_file_data_source.dart';
-import 'package:practice_app/features/auth/data/models/user_model.dart';
+import 'package:practice_app/core/user/model/user_model.dart';
 import 'package:practice_app/features/auth/data/repositories/auth_repository_impl.dart';
-import 'package:practice_app/features/auth/domain/entities/user.dart';
+import 'package:practice_app/core/user/entity/user.dart';
 
 class MockUserLocalCacheDataSource extends Mock implements UserLocalCacheDataSource {}
 class MockUserLocalFileDataSource extends Mock implements UserLocalFileDataSource {}
+class MockUserSessionManager extends Mock implements UserSessionManager{}
 
 void main() {
   late AuthRepositoryImpl repository;
   late MockUserLocalCacheDataSource mockCacheDataSource;
   late MockUserLocalFileDataSource mockFileDataSource;
+  late MockUserSessionManager mockUserSessionManager;
 
   UserModel testUserModel = UserModel(firstName: 'testf', lastName: 'testl', email: 'test@test.com'
   );
@@ -25,9 +28,11 @@ void main() {
   setUp(() {
     mockCacheDataSource = MockUserLocalCacheDataSource();
     mockFileDataSource = MockUserLocalFileDataSource();
+    mockUserSessionManager = MockUserSessionManager();
     repository = AuthRepositoryImpl(
       cacheDataSource: mockCacheDataSource,
       fileDataSource: mockFileDataSource,
+      userSessionManager: mockUserSessionManager
     );
   });
 

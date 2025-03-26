@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:practice_app/core/error/exceptions.dart';
-import 'package:practice_app/features/auth/data/models/user_model.dart';
+import 'package:practice_app/core/user/model/user_model.dart';
 
 abstract class UserLocalFileDataSource {
   Future<UserModel> saveUser(UserModel user);

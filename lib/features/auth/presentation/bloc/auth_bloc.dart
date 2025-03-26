@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:practice_app/core/error/failures.dart';
 import 'package:practice_app/core/usecase/usecase.dart';
-import 'package:practice_app/features/auth/domain/entities/user.dart';
+import 'package:practice_app/core/user/entity/user.dart';
 import 'package:practice_app/features/auth/domain/usecases/sign_in.dart' as si;
 import 'package:practice_app/features/auth/domain/usecases/sign_out.dart';
 import 'package:practice_app/features/auth/domain/usecases/sign_up.dart' as su;

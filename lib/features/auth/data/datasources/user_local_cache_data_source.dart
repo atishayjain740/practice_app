@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:practice_app/core/error/exceptions.dart';
-import 'package:practice_app/features/auth/data/models/user_model.dart';
+import 'package:practice_app/core/user/model/user_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class UserLocalCacheDataSource {

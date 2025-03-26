@@ -1,4 +1,4 @@
-import 'package:practice_app/features/auth/domain/entities/user.dart';
+import 'package:practice_app/core/user/entity/user.dart';
 
 class UserModel extends User {
   UserModel({required super.firstName, required super.lastName, required super.email});

@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:practice_app/core/error/exceptions.dart';
 import 'package:practice_app/features/auth/data/datasources/user_local_cache_data_source.dart';
-import 'package:practice_app/features/auth/data/models/user_model.dart';
+import 'package:practice_app/core/user/model/user_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../fixtures/fixture_reader.dart';

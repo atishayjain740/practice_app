@@ -2,7 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:practice_app/core/error/failures.dart';
 import 'package:practice_app/core/usecase/usecase.dart';
-import 'package:practice_app/features/auth/domain/entities/user.dart';
+import 'package:practice_app/core/user/entity/user.dart';
 import 'package:practice_app/features/auth/domain/repositories/auth_repository.dart';
 
 class SignIn implements UseCase<User, Params> {

@@ -43,6 +43,8 @@ void main() {
           .thenAnswer((_) async => testUserModel);
       when(() => mockCacheDataSource.cacheUser(testUserModel))
           .thenAnswer((_) async => true);
+      when(() => mockUserSessionManager.init())
+          .thenAnswer((_) async => true);
 
       // Act
       final result = await repository.signIn(testUserModel.email);
@@ -51,6 +53,7 @@ void main() {
       expect(result, Right(testUser));
       verify(() => mockFileDataSource.getUser(testUserModel.email)).called(1);
       verify(() => mockCacheDataSource.cacheUser(testUserModel)).called(1);
+      verify(() => mockUserSessionManager.init()).called(1);
     });
 
     test('should return CacheFailure when file data source throws', () async {
@@ -91,6 +94,8 @@ void main() {
       // Arrange
       when(() => mockCacheDataSource.clearCache())
           .thenAnswer((_) async => true);
+      when(() => mockUserSessionManager.init())
+          .thenAnswer((_) async => true);
 
       // Act
       final result = await repository.signOut();
@@ -98,6 +103,7 @@ void main() {
       // Assert
       expect(result, Right(true));
       verify(() => mockCacheDataSource.clearCache());
+      verify(() => mockUserSessionManager.init()).called(1);
     });
 
     test('should return CacheFailure when sign out fails', () async {
@@ -119,6 +125,10 @@ void main() {
       // Arrange
       when(() => mockFileDataSource.saveUser(testUserModel))
           .thenAnswer((_) async => testUserModel);
+      when(() => mockUserSessionManager.init())
+          .thenAnswer((_) async => true);
+      when(() => mockCacheDataSource.cacheUser(testUserModel))
+          .thenAnswer((_) async => true);
 
       // Act
       final result = await repository.signUp(testUser);
@@ -126,6 +136,8 @@ void main() {
       // Assert
       expect(result, Right(testUser));
       verify(() => mockFileDataSource.saveUser(testUserModel));
+      verify(() => mockCacheDataSource.cacheUser(testUserModel));
+      verify(() => mockUserSessionManager.init()).called(1);
     });
 
     test('should return FileFailure when file exception occurs', () async {

@@ -8,14 +8,21 @@ import 'package:practice_app/features/auth/presentation/bloc/auth_event.dart';
 import 'package:practice_app/features/auth/presentation/bloc/auth_state.dart';
 import 'package:practice_app/features/home/presentation/widget/custom_card.dart';
 import 'package:practice_app/injection_container.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (BuildContext context) => sl<AuthBloc>(),
+    return MultiProvider(
+      providers: [
+        BlocProvider<AuthBloc>(create: (context) => sl<AuthBloc>()),
+        Provider<UserSessionManager>(
+          create:
+              (context) => sl<UserSessionManager>(), // Your singleton instance
+        ),
+      ],
       child: HomeView(),
     );
   }
@@ -28,12 +35,13 @@ class HomeView extends StatelessWidget {
   final String _strCounterDescription =
       'Counter feature lets you get a random counter and increment and decrement on it. It also saves your data. It is also offline compatible.';
   final String _strWeatherDescription = 'Weather feature gives you the tempearture. It also saves your data. It shows the last updated weather.';
-  final String _strHeading =
-      'Hi ${sl<UserSessionManager>().currentUser!.firstName}, Explore the features';
-  HomeView({super.key});
+  
+  const HomeView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final String strHeading =
+      'Hi ${context.read<UserSessionManager>().currentUser!.firstName}, Explore the features';
     return Scaffold(
       appBar: AppBar(
         title: Text(_strHomeTitle),
@@ -59,7 +67,7 @@ class HomeView extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  DisplayText(text: _strHeading),
+                  DisplayText(text: strHeading),
                   const SizedBox(height: 20),
                   CustomCard(
                     title: _strCounter,

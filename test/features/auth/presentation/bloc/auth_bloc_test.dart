@@ -160,7 +160,7 @@ void main() {
         return authBloc;
       },
       act: (bloc) => bloc.add(SignOutEvent()),
-      expect: () => [AuthLoading(), AuthInitail()],
+      expect: () => [AuthLoading(), AuthSignOut()],
       verify: (_) {
         verify(() => mockSignOut(NoParams())).called(1);
       },

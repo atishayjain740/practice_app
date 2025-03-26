@@ -13,3 +13,8 @@ class CacheFailure extends Failure {
   @override
   List<Object?> get props => [];
 }
+
+class FileFailure extends Failure {
+  @override
+  List<Object?> get props => [];
+}

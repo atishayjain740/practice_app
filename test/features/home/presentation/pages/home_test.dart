@@ -10,7 +10,7 @@ void main() {
   testWidgets('Home Screen renders two cards', (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
-        home: const HomeView(),
+        home: HomeView(),
       ),
     );
 

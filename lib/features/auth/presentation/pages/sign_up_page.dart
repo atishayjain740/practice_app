@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:practice_app/core/constants/colors.dart';
 import 'package:practice_app/core/widgets/custom_button.dart';
-import 'package:practice_app/core/widgets/display_text.dart';
 import 'package:practice_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:practice_app/features/auth/presentation/bloc/auth_event.dart';
 import 'package:practice_app/features/auth/presentation/bloc/auth_state.dart';
+import 'package:practice_app/features/auth/presentation/widgets/custom_text_form_field.dart';
 import 'package:practice_app/injection_container.dart';
 
 class SignUpPage extends StatelessWidget {
@@ -28,7 +29,13 @@ class SignUpView extends StatefulWidget {
 }
 
 class _SignInViewState extends State<SignUpView> {
-  final String _strWelcome = 'Sign Up';
+  final String _strSignUp = 'Sign Up';
+  final String _strSignIn = 'Existing user? Sign In';
+  final String _strFirstNameHintText = 'Enter your first name';
+  final String _strLastNameHintText = 'Enter your last name';
+  final String _strEmailHintText = 'Enter your email';
+  final String _strLoading = 'Loading...';
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController _firstNamecontroller = TextEditingController();
   final TextEditingController _lastNamecontroller = TextEditingController();
   final TextEditingController _emailcontroller = TextEditingController();
@@ -43,7 +50,7 @@ class _SignInViewState extends State<SignUpView> {
           icon: Icon(Icons.arrow_back),
           onPressed: () => GoRouter.of(context).pop(),
         ),
-        title: Text(_strWelcome),
+        title: Text(_strSignUp),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -55,62 +62,86 @@ class _SignInViewState extends State<SignUpView> {
           },
           child: Center(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                SizedBox(
-                  height: 100,
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: TextFormField(controller: _firstNamecontroller),
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      CustomTextFormField(
+                        controller: _firstNamecontroller,
+                        hintText: _strFirstNameHintText,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your first name';
+                          }
+                          if (value.length < 3) {
+                            return 'Name must be at least 3 characters';
+                          }
+                          return null;
+                        },
+                      ),
+                      CustomTextFormField(
+                        controller: _lastNamecontroller,
+                        hintText: _strLastNameHintText,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your last name';
+                          }
+                          if (value.length < 3) {
+                            return 'Name must be at least 3 characters';
+                          }
+                          return null;
+                        },
+                      ),
+                      CustomTextFormField(
+                        controller: _emailcontroller,
+                        hintText: _strEmailHintText,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your email';
+                          }
+                          if (!RegExp(
+                            r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                          ).hasMatch(value)) {
+                            return 'Please enter a valid email';
+                          }
+                          return null;
+                        },
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 20),
+
                 SizedBox(
-                  height: 100,
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: TextFormField(controller: _lastNamecontroller),
+                  height: 20,
+                  child: BlocBuilder<AuthBloc, AuthState>(
+                    builder: (context, state) {
+                      return _buildAuthData(state);
+                    },
                   ),
                 ),
-                const SizedBox(height: 20),
-                SizedBox(
-                  height: 100,
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: TextFormField(controller: _emailcontroller),
-                  ),
-                ),
-                const SizedBox(height: 50),
+                const SizedBox(height: 10),
                 CustomButton(
                   onPressed: () {
-                    context.read<AuthBloc>().add(
-                      SignUpEvent(
-                        firstName: _firstNamecontroller.text.toString(),
-                        lastName: _lastNamecontroller.text.toString(),
-                        email: _emailcontroller.text.toString(),
-                      ),
-                    );
+                    if (_formKey.currentState!.validate()) {
+                      context.read<AuthBloc>().add(
+                        SignUpEvent(
+                          firstName: _firstNamecontroller.text.toString(),
+                          lastName: _lastNamecontroller.text.toString(),
+                          email: _emailcontroller.text.toString(),
+                        ),
+                      );
+                    }
                   },
-                  text: "Sign Up",
+                  text: _strSignUp,
                 ),
-                const SizedBox(height: 50),
+                const SizedBox(height: 20),
                 CustomButton(
                   onPressed: () {
                     GoRouter.of(context).pop();
                   },
-                  text: "Existing User? Sign In",
-                ),
-                const SizedBox(height: 50),
-                SizedBox(
-                  height: 200,
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: BlocBuilder<AuthBloc, AuthState>(
-                      builder: (context, state) {
-                        return _buildAuthData(state);
-                      },
-                    ),
-                  ),
+                  text: _strSignIn,
                 ),
               ],
             ),
@@ -122,23 +153,18 @@ class _SignInViewState extends State<SignUpView> {
 
   Widget _buildAuthData(AuthState state) {
     switch (state) {
-      case AuthInitail():
-        return DisplayText(text: "");
       case AuthError():
-        return DisplayText(text: state.message);
-      case AuthLoading():
-        return SizedBox(
-          height: 50,
-          width: 50,
-          child: Align(
-            alignment: Alignment.center,
-            child: const CircularProgressIndicator(),
+        return Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            state.message,
+            style: TextStyle(fontSize: 14, color: red),
           ),
         );
-      case AuthLoaded():
-        return DisplayText(
-          text:
-              "${state.user.firstName} ${state.user.lastName} ${state.user.email}",
+      case AuthLoading():
+        return Align(
+          alignment: Alignment.centerLeft,
+          child: Text(_strLoading, style: TextStyle(fontSize: 14, color: red)),
         );
       default:
         return Container();

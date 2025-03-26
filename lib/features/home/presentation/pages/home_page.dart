@@ -22,13 +22,21 @@ class HomePage extends StatelessWidget {
 }
 
 class HomeView extends StatelessWidget {
-  const HomeView({super.key});
+  final String _strHomeTitle = 'Home';
+  final String _strCounter = 'Counter';
+  final String _strWeather = 'Weather';
+  final String _strCounterDescription =
+      'Counter feature lets you get a random counter and increment and decrement on it. It also saves your data. It is also offline compatible.';
+  final String _strWeatherDescription = 'Weather feature gives you the tempearture. It also saves your data. It shows the last updated weather.';
+  final String _strHeading =
+      'Hi ${sl<UserSessionManager>().currentUser!.firstName}, Explore the features';
+  HomeView({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Home'),
+        title: Text(_strHomeTitle),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
@@ -49,17 +57,19 @@ class HomeView extends StatelessWidget {
             },
             child: Center(
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  DisplayText(text: 'Hi ${sl<UserSessionManager>().currentUser!.firstName}'),
+                  DisplayText(text: _strHeading),
                   const SizedBox(height: 20),
                   CustomCard(
-                    title: "Counter",
+                    title: _strCounter,
+                    description: _strCounterDescription,
                     onPressed: () => GoRouter.of(context).push('/counter'),
                   ),
                   const SizedBox(height: 20),
                   CustomCard(
-                    title: "Weather",
+                    title: _strWeather,
+                    description: _strWeatherDescription,
                     onPressed: () => GoRouter.of(context).push('/weather'),
                   ),
                 ],

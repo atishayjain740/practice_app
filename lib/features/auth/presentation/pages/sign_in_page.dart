@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:practice_app/core/constants/colors.dart';
 import 'package:practice_app/core/widgets/custom_button.dart';
-import 'package:practice_app/core/widgets/display_text.dart';
 import 'package:practice_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:practice_app/features/auth/presentation/bloc/auth_event.dart';
 import 'package:practice_app/features/auth/presentation/bloc/auth_state.dart';
+import 'package:practice_app/features/auth/presentation/widgets/custom_text_form_field.dart';
 import 'package:practice_app/injection_container.dart';
 
 class SignInPage extends StatelessWidget {
@@ -28,7 +29,13 @@ class SignInView extends StatefulWidget {
 }
 
 class _SignInViewState extends State<SignInView> {
-  final String _strWelcome = 'Incubyte COE App';
+  final String _strAppBarText = 'Incubyte COE App';
+  final String _strWelcomeText = 'Welcome!';
+  final String _strEmailHintText = 'Enter your email';
+  final String _strSignIn = 'Sign In';
+  final String _strSignUp = 'New user? Sign Up';
+  final String _strLoading = 'Loading...';
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController _controller = TextEditingController();
 
   _SignInViewState();
@@ -36,7 +43,7 @@ class _SignInViewState extends State<SignInView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(_strWelcome)),
+      appBar: AppBar(title: Text(_strAppBarText)),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: BlocListener<AuthBloc, AuthState>(
@@ -51,44 +58,56 @@ class _SignInViewState extends State<SignInView> {
               children: [
                 Align(
                   alignment: Alignment.centerLeft,
-                  child: Text("Welcome!", style: TextStyle(fontSize: 24)),
+                  child: Text(_strWelcomeText, style: TextStyle(fontSize: 24)),
                 ),
                 const SizedBox(height: 20),
-                TextFormField(
-                  controller: _controller,
-                  decoration: InputDecoration(
-                    hintText: 'Enter your email',
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                Form(
+                  key: _formKey,
+                  child: CustomTextFormField(
+                    controller: _controller,
+                    hintText: _strEmailHintText,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        
+                        return 'Please enter your email';
+                      }
+                      if (!RegExp(
+                        r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                      ).hasMatch(value)) {
+                        return 'Please enter a valid email';
+                      }
+                      return null;
+                    },
                   ),
                 ),
-                const SizedBox(height: 50),
+                const SizedBox(height: 30),
+                SizedBox(
+                  height: 20,
+                  child: BlocBuilder<AuthBloc, AuthState>(
+                    builder: (context, state) {
+                      return _buildAuthData(state);
+                    },
+                  ),
+                ),
+                const SizedBox(height: 10),
                 CustomButton(
                   onPressed: () {
-                    context.read<AuthBloc>().add(
-                      SignInEvent(email: _controller.text.toString()),
-                    );
+                    if (_formKey.currentState!.validate()) {
+                      context.read<AuthBloc>().add(
+                        SignInEvent(email: _controller.text.toString()),
+                      );
+                    }
                   },
-                  text: "Sign in",
+                  text: _strSignIn,
                 ),
                 const SizedBox(height: 20),
                 CustomButton(
                   onPressed: () {
                     GoRouter.of(context).push('/signup');
                   },
-                  text: "New User? Sign Up",
+                  text: _strSignUp,
                 ),
-                const SizedBox(height: 50),
-                SizedBox(
-                  height: 200,
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: BlocBuilder<AuthBloc, AuthState>(
-                      builder: (context, state) {
-                        return _buildAuthData(state);
-                      },
-                    ),
-                  ),
-                ),
+                
               ],
             ),
           ),
@@ -99,23 +118,18 @@ class _SignInViewState extends State<SignInView> {
 
   Widget _buildAuthData(AuthState state) {
     switch (state) {
-      case AuthInitail():
-        return DisplayText(text: "");
       case AuthError():
-        return DisplayText(text: state.message);
-      case AuthLoading():
-        return SizedBox(
-          height: 50,
-          width: 50,
-          child: Align(
-            alignment: Alignment.center,
-            child: const CircularProgressIndicator(),
+        return Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            state.message,
+            style: TextStyle(fontSize: 14, color: red),
           ),
         );
-      case AuthLoaded():
-        return DisplayText(
-          text:
-              "${state.user.firstName} ${state.user.lastName} ${state.user.email}",
+      case AuthLoading():
+        return Align(
+          alignment: Alignment.centerLeft,
+          child: Text(_strLoading, style: TextStyle(fontSize: 14, color: red)),
         );
       default:
         return Container();

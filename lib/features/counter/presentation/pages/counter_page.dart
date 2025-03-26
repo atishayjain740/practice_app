@@ -39,54 +39,57 @@ class CounterView extends StatelessWidget {
         title: Text(_strCounter),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            BlocBuilder<CounterBloc, CounterState>(
-              builder: (context, state) {
-                return _buildCounterText(state);
-              },
-            ),
-            const SizedBox(height: 100),
-            CustomButton(
-              onPressed: () {
-                context.read<CounterBloc>().add(GetCountEvent());
-              },
-              text: _strRandomBtnText,
-            ),
-
-            const SizedBox(height: 20),
-            BlocBuilder<CounterBloc, CounterState>(
-              builder: (context, state) {
-                final count =
-                    (state is CounterLoaded)
-                        ? state.counter.count.toString()
-                        : "";
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CircularIconButton(
-                      onPressed: () {
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              BlocBuilder<CounterBloc, CounterState>(
+                builder: (context, state) {
+                  return _buildCounterText(state);
+                },
+              ),
+              const SizedBox(height: 100),
+              CustomButton(
+                onPressed: () {
+                  context.read<CounterBloc>().add(GetCountEvent());
+                },
+                text: _strRandomBtnText,
+              ),
+          
+              const SizedBox(height: 20),
+              BlocBuilder<CounterBloc, CounterState>(
+                builder: (context, state) {
+                  final count =
+                      (state is CounterLoaded)
+                          ? state.counter.count.toString()
+                          : "";
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircularIconButton(
+                        onPressed: () {
+                            context.read<CounterBloc>().add(
+                              IncrementCountEvent(count: count),
+                            );
+                        },
+                        icon: Icons.add,
+                      ),
+                      const SizedBox(width: 20),
+                      CircularIconButton(
+                        onPressed: () {
                           context.read<CounterBloc>().add(
-                            IncrementCountEvent(count: count),
+                            DecrementCountEvent(count: count),
                           );
-                      },
-                      icon: Icons.add,
-                    ),
-                    const SizedBox(width: 20),
-                    CircularIconButton(
-                      onPressed: () {
-                        context.read<CounterBloc>().add(
-                          DecrementCountEvent(count: count),
-                        );
-                      },
-                      icon: Icons.remove,
-                    ),
-                  ],
-                );
-              },
-            ),
-          ],
+                        },
+                        icon: Icons.remove,
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

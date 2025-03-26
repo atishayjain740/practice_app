@@ -28,61 +28,69 @@ class SignInView extends StatefulWidget {
 }
 
 class _SignInViewState extends State<SignInView> {
- final String _strWelcome = 'Welcome';
-final TextEditingController _controller = TextEditingController();
+  final String _strWelcome = 'Incubyte COE App';
+  final TextEditingController _controller = TextEditingController();
 
   _SignInViewState();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () => GoRouter.of(context).pop(),
-        ),
-        title: Text(_strWelcome),
-      ),
+      appBar: AppBar(title: Text(_strWelcome)),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                height: 200,
-                child: Align(
-                  alignment: Alignment.center,
-                  child: TextFormField(controller: _controller,),
+        child: BlocListener<AuthBloc, AuthState>(
+          listener: (context, state) {
+            if (state is AuthLoaded) {
+              GoRouter.of(context).go('/');
+            }
+          },
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text("Welcome!", style: TextStyle(fontSize: 24)),
                 ),
-              ),
-              const SizedBox(height: 50),
-              CustomButton(
-                onPressed: () {
-                  context.read<AuthBloc>().add(SignInEvent(email: _controller.text.toString()));
-                },
-                text: "Sign in",
-              ),
-              const SizedBox(height: 50),
-              CustomButton(
-                onPressed: () {
-                  GoRouter.of(context).push('/signup');
-                },
-                text: "New User? Sign Up",
-              ),
-              const SizedBox(height: 50,),
-              SizedBox(
-                height: 200,
-                child: Align(
-                  alignment: Alignment.center,
-                  child: BlocBuilder<AuthBloc, AuthState>(
-                    builder: (context, state) {
-                      return _buildAuthData(state);
-                    },
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: _controller,
+                  decoration: InputDecoration(
+                    hintText: 'Enter your email',
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                   ),
                 ),
-              ),
-            ],
+                const SizedBox(height: 50),
+                CustomButton(
+                  onPressed: () {
+                    context.read<AuthBloc>().add(
+                      SignInEvent(email: _controller.text.toString()),
+                    );
+                  },
+                  text: "Sign in",
+                ),
+                const SizedBox(height: 20),
+                CustomButton(
+                  onPressed: () {
+                    GoRouter.of(context).push('/signup');
+                  },
+                  text: "New User? Sign Up",
+                ),
+                const SizedBox(height: 50),
+                SizedBox(
+                  height: 200,
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: BlocBuilder<AuthBloc, AuthState>(
+                      builder: (context, state) {
+                        return _buildAuthData(state);
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -105,10 +113,12 @@ final TextEditingController _controller = TextEditingController();
           ),
         );
       case AuthLoaded():
-        return DisplayText(text: "${state.user.firstName} ${state.user.lastName} ${state.user.email}");
+        return DisplayText(
+          text:
+              "${state.user.firstName} ${state.user.lastName} ${state.user.email}",
+        );
       default:
         return Container();
     }
   }
 }
-

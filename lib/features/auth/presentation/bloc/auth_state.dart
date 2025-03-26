@@ -10,6 +10,8 @@ import 'package:practice_app/core/user/entity/user.dart';
 
  class AuthLoading extends AuthState {}
 
+ class AuthSignOut extends AuthState {}
+
  class AuthLoaded extends AuthState {
    final User user;
 

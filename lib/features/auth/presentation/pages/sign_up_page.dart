@@ -47,66 +47,73 @@ class _SignInViewState extends State<SignUpView> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                height: 100,
-                child: Align(
-                  alignment: Alignment.center,
-                  child: TextFormField(controller: _firstNamecontroller),
-                ),
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                height: 100,
-                child: Align(
-                  alignment: Alignment.center,
-                  child: TextFormField(controller: _lastNamecontroller),
-                ),
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                height: 100,
-                child: Align(
-                  alignment: Alignment.center,
-                  child: TextFormField(controller: _emailcontroller),
-                ),
-              ),
-              const SizedBox(height: 50),
-              CustomButton(
-                onPressed: () {
-                  context.read<AuthBloc>().add(
-                    SignUpEvent(
-                      firstName: _firstNamecontroller.text.toString(),
-                      lastName: _lastNamecontroller.text.toString(),
-                      email: _emailcontroller.text.toString(),
-                    ),
-                  );
-                },
-                text: "Sign Up",
-              ),
-              const SizedBox(height: 50),
-              CustomButton(
-                onPressed: () {
-                  GoRouter.of(context).pop();
-                },
-                text: "Existing User? Sign In",
-              ),
-              const SizedBox(height: 50),
-              SizedBox(
-                height: 200,
-                child: Align(
-                  alignment: Alignment.center,
-                  child: BlocBuilder<AuthBloc, AuthState>(
-                    builder: (context, state) {
-                      return _buildAuthData(state);
-                    },
+        child: BlocListener<AuthBloc, AuthState>(
+          listener: (context, state) {
+            if (state is AuthLoaded) {
+              GoRouter.of(context).go('/');
+            }
+          },
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  height: 100,
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: TextFormField(controller: _firstNamecontroller),
                   ),
                 ),
-              ),
-            ],
+                const SizedBox(height: 20),
+                SizedBox(
+                  height: 100,
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: TextFormField(controller: _lastNamecontroller),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                SizedBox(
+                  height: 100,
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: TextFormField(controller: _emailcontroller),
+                  ),
+                ),
+                const SizedBox(height: 50),
+                CustomButton(
+                  onPressed: () {
+                    context.read<AuthBloc>().add(
+                      SignUpEvent(
+                        firstName: _firstNamecontroller.text.toString(),
+                        lastName: _lastNamecontroller.text.toString(),
+                        email: _emailcontroller.text.toString(),
+                      ),
+                    );
+                  },
+                  text: "Sign Up",
+                ),
+                const SizedBox(height: 50),
+                CustomButton(
+                  onPressed: () {
+                    GoRouter.of(context).pop();
+                  },
+                  text: "Existing User? Sign In",
+                ),
+                const SizedBox(height: 50),
+                SizedBox(
+                  height: 200,
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: BlocBuilder<AuthBloc, AuthState>(
+                      builder: (context, state) {
+                        return _buildAuthData(state);
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

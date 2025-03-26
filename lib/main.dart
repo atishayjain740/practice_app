@@ -16,8 +16,8 @@ class PracticeApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = ColorScheme.fromSeed(
       brightness: MediaQuery.platformBrightnessOf(context),
-      seedColor: lightGreen,
-      primary: lightGreen,
+      seedColor: navyBlue,
+      primary: navyBlue,
       onPrimary: white,
     );
 
@@ -41,9 +41,9 @@ class PracticeApp extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12), // Rounded corners
+              borderRadius: BorderRadius.circular(10), // Rounded corners
             ),
-            elevation: 5, // Shadow effect
+            elevation: 3, // Shadow effect
           ),
         ),
       ),

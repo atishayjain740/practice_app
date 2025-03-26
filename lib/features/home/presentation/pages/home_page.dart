@@ -1,0 +1,98 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:practice_app/core/user/user_session_manager.dart';
+import 'package:practice_app/core/widgets/display_text.dart';
+import 'package:practice_app/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:practice_app/features/auth/presentation/bloc/auth_event.dart';
+import 'package:practice_app/features/auth/presentation/bloc/auth_state.dart';
+import 'package:practice_app/features/home/presentation/widget/custom_card.dart';
+import 'package:practice_app/injection_container.dart';
+
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (BuildContext context) => sl<AuthBloc>(),
+      child: HomeView(),
+    );
+  }
+}
+
+class HomeView extends StatelessWidget {
+  const HomeView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Home'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'Sign Out',
+            onPressed: () => _showLogoutDialog(context),
+          ),
+        ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Align(
+          alignment: Alignment.center,
+          child: BlocListener<AuthBloc, AuthState>(
+            listener: (context, state) {
+              if (state is AuthSignOut) {
+                GoRouter.of(context).go('/signin');
+              }
+            },
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  DisplayText(text: 'Hi ${sl<UserSessionManager>().currentUser!.firstName}'),
+                  const SizedBox(height: 20),
+                  CustomCard(
+                    title: "Counter",
+                    onPressed: () => GoRouter.of(context).push('/counter'),
+                  ),
+                  const SizedBox(height: 20),
+                  CustomCard(
+                    title: "Weather",
+                    onPressed: () => GoRouter.of(context).push('/weather'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _showLogoutDialog(BuildContext context) async {
+    final shouldLogout = await showDialog<bool>(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Sign Out'),
+            content: const Text('Are you sure you want to sign out?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text('Sign Out'),
+              ),
+            ],
+          ),
+    );
+
+    if (shouldLogout == true && context.mounted) {
+      context.read<AuthBloc>().add(SignOutEvent());
+    }
+  }
+}

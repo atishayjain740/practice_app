@@ -37,6 +37,7 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<Failure, bool>> signOut() async {
     try {
       await cacheDataSource.clearCache();
+      await userSessionManager.init();
       return Right(true);
     } catch (e) {
       return left(CacheFailure());

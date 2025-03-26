@@ -64,7 +64,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             message: "There was some problem signing out the user"
           ),
         ),
-        (result) => emit(AuthInitail()),
+        (result) => emit(AuthSignOut()),
       );
     });
   }

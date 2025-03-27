@@ -35,13 +35,16 @@ class HomeView extends StatelessWidget {
   final String _strCounterDescription =
       'Counter feature lets you get a random counter and increment and decrement on it. It also saves your data. It is also offline compatible.';
   final String _strWeatherDescription = 'Weather feature gives you the tempearture. It also saves your data. It shows the last updated weather.';
-  
+  final String _strSignOut = 'Sign Out';
+  final String _strCancel = 'Cancel';
+  final String _strSignOutConfirmation = 'Are you sure you want to sign out?';
+
   const HomeView({super.key});
 
   @override
   Widget build(BuildContext context) {
     final String strHeading =
-      'Hi ${context.read<UserSessionManager>().currentUser!.firstName}, Explore the features';
+      'Hi ${context.read<UserSessionManager>().currentUser!.firstName}, Explore the features crafted for you';
     return Scaffold(
       appBar: AppBar(
         title: Text(_strHomeTitle),
@@ -94,16 +97,16 @@ class HomeView extends StatelessWidget {
       context: context,
       builder:
           (context) => AlertDialog(
-            title: const Text('Sign Out'),
-            content: const Text('Are you sure you want to sign out?'),
+            title: Text(_strSignOut),
+            content: Text(_strSignOutConfirmation),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context, false),
-                child: const Text('Cancel'),
+                child: Text(_strCancel),
               ),
               TextButton(
                 onPressed: () => Navigator.pop(context, true),
-                child: const Text('Sign Out'),
+                child: Text(_strSignOut),
               ),
             ],
           ),

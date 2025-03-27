@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:practice_app/core/constants/colors.dart';
+import 'package:practice_app/core/validation/validate_email.dart';
 import 'package:practice_app/core/widgets/custom_button.dart';
 import 'package:practice_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:practice_app/features/auth/presentation/bloc/auth_event.dart';
@@ -67,16 +68,7 @@ class _SignInViewState extends State<SignInView> {
                     controller: _controller,
                     hintText: _strEmailHintText,
                     validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        
-                        return 'Please enter your email';
-                      }
-                      if (!RegExp(
-                        r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                      ).hasMatch(value)) {
-                        return 'Please enter a valid email';
-                      }
-                      return null;
+                      return validateEmail(value!);
                     },
                   ),
                 ),

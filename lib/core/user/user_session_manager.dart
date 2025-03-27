@@ -3,7 +3,7 @@ import 'package:practice_app/core/user/entity/user.dart';
 import 'package:practice_app/core/user/model/user_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-const _cachedUserKey = 'CACHED_USER';
+const cachedUserKey = 'CACHED_USER';
 
 class UserSessionManager {
   final SharedPreferences _prefs;
@@ -16,7 +16,7 @@ class UserSessionManager {
   }
 
   Future<void> _loadUser() async {
-    final json = _prefs.getString(_cachedUserKey);
+    final json = _prefs.getString(cachedUserKey);
     _user = json != null ? UserModel.fromJson(jsonDecode(json)) : null;
   }
 
@@ -24,7 +24,7 @@ class UserSessionManager {
   bool get isLoggedIn => _user != null;
 
   Future<void> logout() async {
-    await _prefs.remove(_cachedUserKey);
+    await _prefs.remove(cachedUserKey);
     _user = null;
   }
 }

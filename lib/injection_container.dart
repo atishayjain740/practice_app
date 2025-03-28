@@ -6,6 +6,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:practice_app/core/network/netrwork_info.dart';
 import 'package:practice_app/core/user/user_session_manager.dart';
 import 'package:practice_app/features/auth/data/datasources/user_local_cache_data_source.dart';
+import 'package:practice_app/features/auth/data/datasources/user_local_db_data_source.dart';
 import 'package:practice_app/features/auth/data/datasources/user_local_file_data_source.dart';
 import 'package:practice_app/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:practice_app/features/auth/domain/repositories/auth_repository.dart';
@@ -30,6 +31,7 @@ import 'package:practice_app/features/weather/domain/usecases/get_weather.dart';
 import 'package:practice_app/features/weather/presentation/bloc/weather_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:sqflite/sqflite.dart';
 
 final sl = GetIt.instance;
 
@@ -54,7 +56,7 @@ Future<void> init() async {
     () => AuthRepositoryImpl(
       userSessionManager: sl(),
       cacheDataSource: sl(),
-      fileDataSource: sl(),
+      dbDataSource: sl(),
     ),
   );
 
@@ -64,6 +66,12 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<UserLocalFileDataSource>(
     () => UserLocalFileDataSourceImpl(file: sl()),
+  );
+
+  final Database database = await initUserDb();
+  sl.registerLazySingleton<Database>(() => database);
+  sl.registerLazySingleton<UserLocalDBDataSource>(
+    () => UserLocalDatabaseDataSourceImpl(database: sl<Database>()),
   );
 
 

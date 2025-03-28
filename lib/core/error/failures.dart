@@ -18,3 +18,8 @@ class FileFailure extends Failure {
   @override
   List<Object?> get props => [];
 }
+
+class DBFailure extends Failure {
+  @override
+  List<Object?> get props => [];
+}

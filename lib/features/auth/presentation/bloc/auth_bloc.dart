@@ -21,10 +21,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       result.fold(
         (failure) => emit(
           AuthError(
-            message:
-                failure is CacheFailure
-                    ? "There was problem logging in."
-                    : "User not registered",
+            message: "There was problem logging in."
           ),
         ),
         (user) => emit(AuthLoaded(user: user)),
@@ -45,10 +42,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       result.fold(
         (failure) => emit(
           AuthError(
-            message:
-                failure is CacheFailure
-                    ? "There was problem logging in."
-                    : "User not registered",
+            message: "There was problem signing up."
           ),
         ),
         (user) => emit(AuthLoaded(user: user)),

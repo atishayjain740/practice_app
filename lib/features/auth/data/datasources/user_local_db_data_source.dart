@@ -38,7 +38,7 @@ class UserLocalDatabaseDataSourceImpl implements UserLocalDBDataSource {
   @override
   Future<UserModel> getUser(String email) async {
     final result = await database.query(
-      userTable, // Fixed: Using table name instead of database name
+      userTable,
       where: 'email = ?',
       whereArgs: [email],
     );
@@ -50,7 +50,7 @@ class UserLocalDatabaseDataSourceImpl implements UserLocalDBDataSource {
       };
       return UserModel.fromJson(json);
     } else {
-      throw DBException(); // Ensure DBException is defined
+      throw DBException();
     }
   }
 
@@ -58,7 +58,7 @@ class UserLocalDatabaseDataSourceImpl implements UserLocalDBDataSource {
   Future<UserModel> saveUser(UserModel user) async {
     try {
       await database.insert(
-        userTable, // Fixed: Using table name instead of database name
+        userTable,
         {
           'firstname': user.firstName,
           'lastname': user.lastName,
@@ -68,7 +68,7 @@ class UserLocalDatabaseDataSourceImpl implements UserLocalDBDataSource {
       );
       return user;
     } catch (e) {
-      throw DBException(); // Ensure DBException is defined
+      throw DBException();
     }
   }
 }

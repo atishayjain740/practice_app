@@ -32,9 +32,11 @@ class HomeView extends StatelessWidget {
   final String _strHomeTitle = 'Home';
   final String _strCounter = 'Counter';
   final String _strWeather = 'Weather';
+  final String _strNotes = 'Notes';
   final String _strCounterDescription =
       'Counter feature lets you get a random counter and increment and decrement on it. It also saves your data. It is also offline compatible.';
   final String _strWeatherDescription = 'Weather feature gives you the tempearture. It also saves your data. It shows the last updated weather.';
+  final String _strNotesDescription = 'Notes feature gives you the functionality to see, add and delete notes. Keeping your data saved.';
   final String _strSignOut = 'Sign Out';
   final String _strCancel = 'Cancel';
   final String _strSignOutConfirmation = 'Are you sure you want to sign out?';
@@ -82,6 +84,11 @@ class HomeView extends StatelessWidget {
                     title: _strWeather,
                     description: _strWeatherDescription,
                     onPressed: () => GoRouter.of(context).push('/weather'),
+                  ),
+                  CustomCard(
+                    title: _strNotes,
+                    description: _strNotesDescription,
+                    onPressed: () => GoRouter.of(context).push('/notes'),
                   ),
                 ],
               ),

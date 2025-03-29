@@ -23,6 +23,13 @@ import 'package:practice_app/features/counter/domain/usecases/get_cached_counter
 import 'package:practice_app/features/counter/domain/usecases/get_counter.dart';
 import 'package:practice_app/features/counter/domain/usecases/increment_counter.dart';
 import 'package:practice_app/features/counter/presentation/bloc/counter_bloc.dart';
+import 'package:practice_app/features/notes/data/datasources/notes_local_db_data_source.dart';
+import 'package:practice_app/features/notes/data/repositories/notes_repository_impl.dart';
+import 'package:practice_app/features/notes/domain/repositories/notes_repository.dart';
+import 'package:practice_app/features/notes/domain/usecases/add_note.dart';
+import 'package:practice_app/features/notes/domain/usecases/delete_note.dart';
+import 'package:practice_app/features/notes/domain/usecases/get_all_notes.dart';
+import 'package:practice_app/features/notes/presentation/bloc/notes_bloc.dart';
 import 'package:practice_app/features/weather/data/datasources/weather_local_data_source.dart';
 import 'package:practice_app/features/weather/data/datasources/weather_remote_data_source.dart';
 import 'package:practice_app/features/weather/data/repositories/weather_repository_impl.dart';
@@ -38,13 +45,7 @@ final sl = GetIt.instance;
 Future<void> init() async {
   // features - Auth
   // bloc
-  sl.registerFactory(
-    () => AuthBloc(
-      signIn: sl(),
-      signOut: sl(),
-      signUp: sl()
-    ),
-  );
+  sl.registerFactory(() => AuthBloc(signIn: sl(), signOut: sl(), signUp: sl()));
 
   // usecases
   sl.registerLazySingleton(() => SignIn(sl()));
@@ -69,11 +70,12 @@ Future<void> init() async {
   );
 
   final Database database = await initUserDb();
-  sl.registerLazySingleton<Database>(() => database);
+  sl.registerLazySingleton<Database>(() => database, instanceName: 'userdb');
   sl.registerLazySingleton<UserLocalDBDataSource>(
-    () => UserLocalDatabaseDataSourceImpl(database: sl<Database>()),
+    () => UserLocalDatabaseDataSourceImpl(
+      database: sl<Database>(instanceName: 'userdb'),
+    ),
   );
-
 
   // features - Counter
   // bloc
@@ -111,11 +113,7 @@ Future<void> init() async {
 
   // features - Weather
   // bloc
-  sl.registerFactory(
-    () => WeatherBloc(
-      getWeather: sl(),
-    ),
-  );
+  sl.registerFactory(() => WeatherBloc(getWeather: sl()));
 
   // usecases
   sl.registerLazySingleton(() => GetWeather(sl()));
@@ -137,12 +135,38 @@ Future<void> init() async {
     () => WeatherLocalDataSourceImpl(sharedPreferences: sl()),
   );
 
+  // features - Notes
+  // Bloc
+  sl.registerFactory(
+    () => NotesBloc(getAllNotes: sl(), addNote: sl(), deleteNote: sl()),
+  );
+
+  // use cases
+  sl.registerLazySingleton(() => GetAllNotes(sl()));
+  sl.registerLazySingleton(() => AddNote(sl()));
+  sl.registerLazySingleton(() => DeleteNote(sl()));
+
+  // repository
+  sl.registerLazySingleton<NotesRepository>(
+    () => NotesRepositoryImpl(dbDataSource: sl()),
+  );
+
+  // datasource
+  final Database databaseNotes = await initNotesDb();
+  sl.registerLazySingleton<Database>(
+    () => databaseNotes,
+    instanceName: 'notesdb',
+  );
+  sl.registerLazySingleton<NotesLocalDBDataSource>(
+    () => NotesLocalDBDataSourceImpl(
+      database: sl<Database>(instanceName: 'notesdb'),
+    ),
+  );
 
   // external
   final sharedPreferences = await SharedPreferences.getInstance();
   sl.registerSingleton<SharedPreferences>(sharedPreferences);
 
-  
   Directory dir = await getApplicationDocumentsDirectory();
   File file = File("${dir.path}/users.json");
   sl.registerLazySingleton(() => file);

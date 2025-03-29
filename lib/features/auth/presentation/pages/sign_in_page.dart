@@ -7,7 +7,7 @@ import 'package:practice_app/core/widgets/custom_button.dart';
 import 'package:practice_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:practice_app/features/auth/presentation/bloc/auth_event.dart';
 import 'package:practice_app/features/auth/presentation/bloc/auth_state.dart';
-import 'package:practice_app/features/auth/presentation/widgets/custom_text_form_field.dart';
+import 'package:practice_app/core/widgets/custom_text_form_field.dart';
 import 'package:practice_app/injection_container.dart';
 
 class SignInPage extends StatelessWidget {

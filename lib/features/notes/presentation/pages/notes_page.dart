@@ -1,31 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:practice_app/core/router/router.dart';
 import 'package:practice_app/core/widgets/display_text.dart';
 import 'package:practice_app/features/notes/domain/entities/note.dart';
 import 'package:practice_app/features/notes/presentation/bloc/notes_bloc.dart';
 import 'package:practice_app/features/notes/presentation/bloc/notes_event.dart';
 import 'package:practice_app/features/notes/presentation/bloc/notes_state.dart';
 import 'package:practice_app/features/notes/presentation/widgets/custom_note_card.dart';
-import 'package:practice_app/injection_container.dart';
+
 
 class NotesPage extends StatelessWidget {
-  const NotesPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => sl<NotesBloc>()..add(GetAllNotesEvent()),
-      child: const NotesView(),
-    );
-  }
-}
-
-class NotesView extends StatelessWidget {
   final String _strCounter = 'Notes';
   final String _strInitialText = "Click on the + icon to add notes";
 
-  const NotesView({super.key});
+  const NotesPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +28,7 @@ class NotesView extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          GoRouter.of(context).push('/addnote');
+          GoRouter.of(context).push(addnoteRoute);
         },
         child: const Icon(Icons.add),
       ),

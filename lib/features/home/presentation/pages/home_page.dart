@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:practice_app/core/router/router.dart';
 import 'package:practice_app/core/user/user_session_manager.dart';
 import 'package:practice_app/core/widgets/display_text.dart';
 import 'package:practice_app/features/auth/presentation/bloc/auth_bloc.dart';
@@ -20,7 +21,7 @@ class HomePage extends StatelessWidget {
         BlocProvider<AuthBloc>(create: (context) => sl<AuthBloc>()),
         Provider<UserSessionManager>(
           create:
-              (context) => sl<UserSessionManager>(), // Your singleton instance
+              (context) => sl<UserSessionManager>(),
         ),
       ],
       child: HomeView(),
@@ -36,7 +37,7 @@ class HomeView extends StatelessWidget {
   final String _strCounterDescription =
       'Counter feature lets you get a random counter and increment and decrement on it. It also saves your data. It is also offline compatible.';
   final String _strWeatherDescription = 'Weather feature gives you the tempearture. It also saves your data. It shows the last updated weather.';
-  final String _strNotesDescription = 'Notes feature gives you the functionality to see, add and delete notes. Keeping your data saved.';
+  final String _strNotesDescription = 'Notes feature gives you the functionality to view, add and delete notes. It also saves your data.';
   final String _strSignOut = 'Sign Out';
   final String _strCancel = 'Cancel';
   final String _strSignOutConfirmation = 'Are you sure you want to sign out?';
@@ -53,7 +54,7 @@ class HomeView extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
-            tooltip: 'Sign Out',
+            tooltip: _strSignOut,
             onPressed: () => _showLogoutDialog(context),
           ),
         ],
@@ -65,7 +66,7 @@ class HomeView extends StatelessWidget {
           child: BlocListener<AuthBloc, AuthState>(
             listener: (context, state) {
               if (state is AuthSignOut) {
-                GoRouter.of(context).go('/signin');
+                GoRouter.of(context).go(signinRoute);
               }
             },
             child: Center(
@@ -77,18 +78,19 @@ class HomeView extends StatelessWidget {
                   CustomCard(
                     title: _strCounter,
                     description: _strCounterDescription,
-                    onPressed: () => GoRouter.of(context).push('/counter'),
+                    onPressed: () => GoRouter.of(context).push(counterRoute),
                   ),
                   const SizedBox(height: 20),
                   CustomCard(
                     title: _strWeather,
                     description: _strWeatherDescription,
-                    onPressed: () => GoRouter.of(context).push('/weather'),
+                    onPressed: () => GoRouter.of(context).push(weatherRoute),
                   ),
+                  const SizedBox(height: 20),
                   CustomCard(
                     title: _strNotes,
                     description: _strNotesDescription,
-                    onPressed: () => GoRouter.of(context).push('/notes'),
+                    onPressed: () => GoRouter.of(context).push(notesRoute),
                   ),
                 ],
               ),

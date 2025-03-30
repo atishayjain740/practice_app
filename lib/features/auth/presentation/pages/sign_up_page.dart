@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:practice_app/core/constants/colors.dart';
+import 'package:practice_app/core/router/router.dart';
 import 'package:practice_app/core/validation/validate_email.dart';
 import 'package:practice_app/core/validation/validate_name.dart';
 import 'package:practice_app/core/widgets/custom_button.dart';
@@ -59,7 +60,7 @@ class _SignInViewState extends State<SignUpView> {
         child: BlocListener<AuthBloc, AuthState>(
           listener: (context, state) {
             if (state is AuthLoaded) {
-              GoRouter.of(context).go('/');
+              GoRouter.of(context).go(homeRoute);
             }
           },
           child: Center(

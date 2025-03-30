@@ -5,7 +5,13 @@ class CustomTextFormField extends StatefulWidget {
   final String hintText;
   final String? Function(String?)? validator;
   final int maxlines;
-  const CustomTextFormField({super.key, required this.controller, required this.hintText, required this.validator, this.maxlines = 1});
+  const CustomTextFormField({
+    super.key,
+    required this.controller,
+    required this.hintText,
+    required this.validator,
+    this.maxlines = 1,
+  });
 
   @override
   State<CustomTextFormField> createState() => _CustomTextFormFieldState();
@@ -15,7 +21,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 80,
+      height: _getHeight(),
       child: TextFormField(
         controller: widget.controller,
         decoration: InputDecoration(
@@ -26,5 +32,10 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
         maxLines: widget.maxlines,
       ),
     );
+  }
+
+  // Might have to change based on font size.
+  double _getHeight() {
+    return 80 + (widget.maxlines > 1 ? 24 * (widget.maxlines - 1) : 0);
   }
 }

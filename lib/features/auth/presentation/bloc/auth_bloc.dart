@@ -1,3 +1,4 @@
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:practice_app/core/usecase/usecase.dart';
 import 'package:practice_app/core/user/entity/user.dart';
@@ -17,6 +18,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<SignInEvent>((event, emit) async {
       emit(AuthLoading());
       final result = await signIn(si.Params(email: event.email));
+      
       result.fold(
         (failure) => emit(
           AuthError(
@@ -25,7 +27,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         ),
         (user) => emit(AuthLoaded(user: user)),
       );
-    });
+    }, transformer: droppable());
 
     on<SignUpEvent>((event, emit) async {
       emit(AuthLoading());
